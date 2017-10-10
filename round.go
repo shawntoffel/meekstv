@@ -17,5 +17,16 @@ func (m *meekStv) IncrementRound() {
 }
 
 func (m *meekStv) DoRound() {
+	m.IncrementRound()
 
+	for i := 0; i < m.MaxIterations; i++ {
+
+		m.DistributeVotes()
+
+		m.UpdateQuota()
+
+		if m.Converged() {
+			break
+		}
+	}
 }
