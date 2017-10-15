@@ -20,9 +20,9 @@ func (m *meekStv) ElectEligibleCandidates() {
 
 func (m *meekStv) FindEligibleCandidates() int {
 	count := 0
-	candidates := m.Pool.Candidates()
+	candidates := m.Pool.CandidatesWithStatus(Hopeful)
 	for _, candidate := range candidates {
-		if candidate.Status == Hopeful && candidate.Votes > m.Quota {
+		if candidate.Votes > m.Quota {
 			count = count + 1
 			m.Pool.Almost(candidate.Id)
 
