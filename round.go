@@ -19,6 +19,8 @@ func (m *meekStv) IncrementRound() {
 func (m *meekStv) DoRound() {
 	m.IncrementRound()
 
+	converged := false
+
 	for i := 0; i < m.MaxIterations; i++ {
 
 		m.DistributeVotes()
@@ -26,7 +28,14 @@ func (m *meekStv) DoRound() {
 		m.UpdateQuota()
 
 		if m.Converged() {
+			converged = true
 			break
 		}
 	}
+
+	if !converged {
+		m.AddEvent(&events.FailedToConverge{m.MaxIterations})
+	}
+
+	m.ElectEligibleCandidates()
 }
