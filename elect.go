@@ -46,12 +46,10 @@ func (m *meekStv) AdjustNewlyElectedWeight() {
 }
 
 func (m *meekStv) NewlyElectAllAlmostCandidates() {
-	candidates := m.Pool.Candidates()
+	candidates := m.Pool.CandidatesWithStatus(Almost)
 	for _, candidate := range candidates {
-		if candidate.Status == Almost {
-			m.Pool.NewlyElect(candidate.Id)
-			m.AddEvent(&events.Elected{candidate.Name})
-		}
+		m.Pool.NewlyElect(candidate.Id)
+		m.AddEvent(&events.Elected{candidate.Name})
 	}
 }
 
