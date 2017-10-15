@@ -17,6 +17,8 @@ func (m *meekStv) DistributeVotes() {
 	for _, ballot := range m.Ballots {
 		m.DistributeAmongstBallot(ballot)
 	}
+
+	m.AddEvent(&events.VotesDistributed{})
 }
 
 func (m *meekStv) DistributeAmongstBallot(ballot election.RolledUpBallot) {
@@ -62,7 +64,8 @@ func (m *meekStv) DistributeCandidateVotes(meekCandidate MeekCandidate, remainde
 }
 
 func (m *meekStv) GiveVotesToCandidate(meekCandidate MeekCandidate, votes int64) {
-	newVotes := meekCandidate.Votes + votes
+	oldVotes := meekCandidate.Votes
+	newVotes := oldVotes + votes
 
 	m.Pool.SetVotes(meekCandidate.Id, newVotes)
 

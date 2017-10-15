@@ -10,7 +10,7 @@ type Elected struct {
 }
 
 func (e *Elected) Process() election.Event {
-	description := fmt.Sprintf("Candidate %s has been elected.", e.Name)
+	description := fmt.Sprintf("%s has been elected.", e.Name)
 
 	return election.Event{description}
 }

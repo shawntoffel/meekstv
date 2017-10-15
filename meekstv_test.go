@@ -10,7 +10,7 @@ func TestMeekStv(t *testing.T) {
 
 	var config = election.Config{}
 
-	names := []string{"Alice", "Bob", "Chris", "Don", "Eric", "Frank"}
+	names := []string{"Alice", "Bob", "Chris", "Don", "Eric"}
 
 	for _, name := range names {
 		c := election.Candidate{}
@@ -22,7 +22,7 @@ func TestMeekStv(t *testing.T) {
 
 	var ballots election.Ballots
 
-	for i := 0; i < 28; i++ {
+	for i := 0; i < 5; i++ {
 		var ballot = election.NewBallot()
 		ballot.PushBack("Alice")
 		ballot.PushBack("Bob")
@@ -30,7 +30,7 @@ func TestMeekStv(t *testing.T) {
 		ballots = append(ballots, ballot)
 	}
 
-	for i := 0; i < 26; i++ {
+	for i := 0; i < 16; i++ {
 		var ballot = election.NewBallot()
 		ballot.PushBack("Bob")
 		ballot.PushBack("Alice")
@@ -38,7 +38,7 @@ func TestMeekStv(t *testing.T) {
 		ballots = append(ballots, ballot)
 	}
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 2; i++ {
 		var ballot = election.NewBallot()
 		ballot.PushBack("Chris")
 		ballots = append(ballots, ballot)
@@ -55,7 +55,7 @@ func TestMeekStv(t *testing.T) {
 	ballots = append(ballots, ballot)
 
 	config.Ballots = ballots
-	config.WithdrawnCandidates = []string{"Frank"}
+	//config.WithdrawnCandidates = []string{"Frank"}
 
 	config.NumSeats = 3
 	config.Precision = 6

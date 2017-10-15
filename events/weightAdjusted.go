@@ -11,7 +11,7 @@ type WeightAdjusted struct {
 }
 
 func (e *WeightAdjusted) Process() election.Event {
-	description := fmt.Sprintf("Candidate %s weight has been adjusted to %d", e.Name, e.NewWeight)
+	description := fmt.Sprintf("%s weight has been adjusted to %d", e.Name, e.NewWeight)
 
 	return election.Event{description}
 }

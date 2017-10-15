@@ -12,6 +12,9 @@ func (m *meekStv) Converged() bool {
 	for _, candidate := range candidates {
 		if candidate.Status == Elected {
 			converged = m.TryConverge(candidate)
+
+			m.AddEvent(&events.TriedToConverge{converged})
+
 			m.SettleWeight(candidate)
 		}
 	}
@@ -23,19 +26,22 @@ func (m *meekStv) TryConverge(candidate MeekCandidate) bool {
 
 	currentWeight := (m.Quota * m.Scale) / candidate.Votes
 
-	if currentWeight > m.UpperWeightBound() || currentWeight < m.LowerWeightBound() {
+	upperBound := m.UpperWeightBound()
+	lowerBound := m.LowerWeightBound()
+
+	if currentWeight > upperBound || currentWeight < lowerBound {
 		return false
 	}
 
-	return false
+	return true
 }
 
 func (m *meekStv) SettleWeight(candidate MeekCandidate) {
 	newWeight := (m.Quota * candidate.Weight) / candidate.Votes
 
-	remaineder := newWeight % candidate.Votes
+	remainder := newWeight % candidate.Votes
 
-	if remaineder > 0 {
+	if remainder > 0 {
 		newWeight = newWeight + 1
 	}
 
@@ -49,21 +55,21 @@ func (m *meekStv) SettleWeight(candidate MeekCandidate) {
 }
 
 func (m *meekStv) UpperWeightBound() int64 {
-	//bound := m.GetScaleBound()
+	bound := m.GetScaleBound()
 
-	return m.Scale + 1
+	return m.Scale + bound
 }
 
 func (m *meekStv) LowerWeightBound() int64 {
-	//bound := m.GetScaleBound()
+	bound := m.GetScaleBound()
 
-	return m.Scale - 1
+	return m.Scale - bound
 }
 
 func (m *meekStv) GetScaleBound() int64 {
 	frac := int64(100000)
 
-	bound := m.Scale / (frac * m.Scale) / m.Scale
+	bound := m.Scale / frac
 
 	return bound
 }

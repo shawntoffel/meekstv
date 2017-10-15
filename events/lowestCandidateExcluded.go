@@ -14,9 +14,9 @@ func (e *LowestCandidateExcluded) Process() election.Event {
 
 	description := ""
 	if e.RandomUsed {
-		description = fmt.Sprintf("Candidate %s was tied for lowest number of votes and was randomly selected for exclusion.", e.Name)
+		description = fmt.Sprintf("%s was tied for lowest number of votes and was randomly selected for exclusion.", e.Name)
 	} else {
-		description = fmt.Sprintf("Candidate %s has the lowest number of votes and is excluded.", e.Name)
+		description = fmt.Sprintf("%s has the lowest number of votes and is excluded.", e.Name)
 	}
 
 	return election.Event{description}
