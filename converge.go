@@ -49,15 +49,21 @@ func (m *meekStv) SettleWeight(candidate MeekCandidate) {
 }
 
 func (m *meekStv) UpperWeightBound() int64 {
-	frac := int64(100000)
+	//bound := m.GetScaleBound()
 
-	a := m.Scale / (frac * m.Scale) / m.Scale
-
-	return m.Scale + a
+	return m.Scale + 1
 }
 
 func (m *meekStv) LowerWeightBound() int64 {
+	//bound := m.GetScaleBound()
+
+	return m.Scale - 1
+}
+
+func (m *meekStv) GetScaleBound() int64 {
 	frac := int64(100000)
 
-	return m.Scale / frac * m.Scale
+	bound := m.Scale / (frac * m.Scale) / m.Scale
+
+	return bound
 }
