@@ -11,6 +11,11 @@ func (m *meekStv) ElectEligibleCandidates() {
 
 	m.HandleMultiwayTie(eligibleCount)
 
+	m.NewlyElectAllAlmostCandidates()
+
+	m.AdjustNewlyElectedWeight()
+
+	m.Pool.ElectAllNewlyElected()
 }
 
 func (m *meekStv) FindEligibleCandidates() int {
@@ -26,6 +31,28 @@ func (m *meekStv) FindEligibleCandidates() int {
 	}
 
 	return count
+}
+
+func (m *meekStv) AdjustNewlyElectedWeight() {
+	candidates := m.Pool.CandidatesWithStatus(NewlyElected)
+
+	for _, candidate := range candidates {
+		newWeight := (m.Quota * m.Scale) / candidate.Votes
+
+		m.Pool.SetWeight(candidate.Id, newWeight)
+
+		m.AddEvent(&events.WeightAdjusted{candidate.Name, newWeight})
+	}
+}
+
+func (m *meekStv) NewlyElectAllAlmostCandidates() {
+	candidates := m.Pool.Candidates()
+	for _, candidate := range candidates {
+		if candidate.Status == Almost {
+			m.Pool.NewlyElect(candidate.Id)
+			m.AddEvent(&events.Elected{candidate.Name})
+		}
+	}
 }
 
 func (m *meekStv) HandleMultiwayTie(eligibleCount int) {

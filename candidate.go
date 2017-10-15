@@ -7,10 +7,11 @@ import (
 type CandidateStatus string
 
 const (
-	Elected  CandidateStatus = "Elected"
-	Hopeful  CandidateStatus = "Hopeful"
-	Excluded CandidateStatus = "Excluded"
-	Almost   CandidateStatus = "Almost"
+	Elected      CandidateStatus = "Elected"
+	NewlyElected CandidateStatus = "NewlyElected"
+	Hopeful      CandidateStatus = "Hopeful"
+	Excluded     CandidateStatus = "Excluded"
+	Almost       CandidateStatus = "Almost"
 )
 
 type MeekCandidates []MeekCandidate
