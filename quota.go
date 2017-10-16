@@ -9,11 +9,10 @@ func (m *meekStv) Droop() int64 {
 }
 
 func (m *meekStv) UpdateQuota() {
-	total := m.Ballots.Total()
-
+	total := int64(m.Ballots.Total()) * m.Scale
 	prevQuota := m.Quota
 
-	m.Quota = (int64(total) - m.MeekRound.Excess) * m.Droop() / m.Scale * m.Scale
+	m.Quota = (int64(total) - m.MeekRound.Excess) * m.Droop() / m.Scale * m.Scale / m.Scale
 
 	if prevQuota != m.Quota {
 		m.AddEvent(&events.QuotaUpdated{m.Quota})

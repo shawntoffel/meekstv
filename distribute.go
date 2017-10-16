@@ -45,6 +45,8 @@ func (m *meekStv) DistributeAmongstBallot(ballot election.RolledUpBallot) {
 	}
 
 	m.MeekRound.Excess = m.MeekRound.Excess + value
+
+	m.AddEvent(&events.ExcessUpdated{m.MeekRound.Excess})
 }
 
 func (m *meekStv) DistributeCandidateVotes(meekCandidate MeekCandidate, remainder int64) int64 {
@@ -64,6 +66,10 @@ func (m *meekStv) DistributeCandidateVotes(meekCandidate MeekCandidate, remainde
 }
 
 func (m *meekStv) GiveVotesToCandidate(meekCandidate MeekCandidate, votes int64) {
+	if meekCandidate.Status == Excluded {
+		return
+	}
+
 	oldVotes := meekCandidate.Votes
 	newVotes := oldVotes + votes
 

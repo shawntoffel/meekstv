@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (m *meekStv) ElectEligibleCandidates() {
+func (m *meekStv) ElectEligibleCandidates() int {
 	eligibleCount := m.FindEligibleCandidates()
 
 	m.HandleMultiwayTie(eligibleCount)
@@ -16,6 +16,8 @@ func (m *meekStv) ElectEligibleCandidates() {
 	m.AdjustNewlyElectedWeight()
 
 	m.Pool.ElectAllNewlyElected()
+
+	return eligibleCount
 }
 
 func (m *meekStv) FindEligibleCandidates() int {

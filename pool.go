@@ -161,6 +161,11 @@ func (p *pool) Lowest() MeekCandidates {
 	lowest := MeekCandidates{}
 
 	for _, candidate := range candidates {
+
+		if candidate.Status == Excluded {
+			continue
+		}
+
 		if len(lowest) > 0 && candidate.Votes != lowest[0].Votes {
 			break
 		}
@@ -187,6 +192,7 @@ func (p *pool) AddNewCandidates(candidates election.Candidates, scale int64) {
 func (p *pool) Exclude(id string) *MeekCandidate {
 	candidate := p.Candidate(id)
 	candidate.Weight = 0
+	candidate.Votes = 0
 	candidate.Status = Excluded
 	p.Storage[candidate.Id] = candidate
 

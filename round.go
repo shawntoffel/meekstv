@@ -37,5 +37,23 @@ func (m *meekStv) DoRound() {
 		m.AddEvent(&events.FailedToConverge{m.MaxIterations})
 	}
 
-	m.ElectEligibleCandidates()
+	count := m.ElectEligibleCandidates()
+
+	if count > 0 {
+		m.MeekRound.AnyElected = true
+	}
+}
+
+func (m *meekStv) RoundHasEnded() bool {
+	if !m.MeekRound.AnyElected {
+		return true
+	}
+
+	numElected := m.Pool.ElectedCount()
+
+	if numElected >= m.NumSeats {
+		return true
+	}
+
+	return false
 }

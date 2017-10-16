@@ -29,3 +29,8 @@ func (m *meekStv) HasEnded() bool {
 
 	return numElected == m.NumSeats
 }
+
+func (m *meekStv) ElectionFinished() bool {
+	numElected := m.Pool.ElectedCount()
+	return numElected >= m.NumSeats
+}

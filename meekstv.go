@@ -52,6 +52,10 @@ func (m *meekStv) Count() (*election.Result, error) {
 		}
 
 		m.DoRound()
+
+		if !m.ElectionFinished() {
+			m.ExcludeLowestCandidate()
+		}
 	}
 
 	m.Finalize()
