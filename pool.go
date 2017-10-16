@@ -87,10 +87,7 @@ func (p *pool) Count() int {
 }
 
 func (p *pool) ExcludedCount() int {
-	elected := len(p.CandidatesWithStatus(Excluded))
-	newlyElected := len(p.CandidatesWithStatus(NewlyElected))
-
-	return elected + newlyElected
+	return len(p.CandidatesWithStatus(Excluded))
 }
 
 func (p *pool) Elected() MeekCandidates {
@@ -98,7 +95,10 @@ func (p *pool) Elected() MeekCandidates {
 }
 
 func (p *pool) ElectedCount() int {
-	return len(p.CandidatesWithStatus(Elected))
+	elected := len(p.CandidatesWithStatus(Elected))
+	newlyElected := len(p.CandidatesWithStatus(NewlyElected))
+
+	return elected + newlyElected
 }
 
 func (p *pool) Elect(id string) {
