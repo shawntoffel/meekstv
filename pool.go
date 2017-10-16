@@ -191,6 +191,11 @@ func (p *pool) AddNewCandidates(candidates election.Candidates, scale int64) {
 
 func (p *pool) Exclude(id string) *MeekCandidate {
 	candidate := p.Candidate(id)
+
+	if candidate == nil {
+		return nil
+	}
+
 	candidate.Weight = 0
 	candidate.Votes = 0
 	candidate.Status = Excluded

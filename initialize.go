@@ -8,6 +8,10 @@ import (
 
 func (m *meekStv) SetupNumSeats(config election.Config) {
 	m.NumSeats = config.NumSeats
+
+	if m.NumSeats < 0 {
+		m.NumSeats = 0
+	}
 }
 
 func (m *meekStv) SetupPrecision(config election.Config) {
@@ -45,7 +49,9 @@ func (m *meekStv) ExcludeWithdrawnCandidates(ids []string) {
 	for _, id := range ids {
 		candidate := m.Pool.Exclude(id)
 
-		excluded = append(excluded, candidate.Name)
+		if candidate != nil {
+			excluded = append(excluded, candidate.Name)
+		}
 	}
 
 	m.AddEvent(&events.CandidatesExcluded{excluded})
