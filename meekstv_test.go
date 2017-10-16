@@ -22,7 +22,7 @@ func TestMeekStv(t *testing.T) {
 
 	var ballots election.Ballots
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 28; i++ {
 		var ballot = election.NewBallot()
 		ballot.PushBack("Alice")
 		ballot.PushBack("Bob")
@@ -30,7 +30,7 @@ func TestMeekStv(t *testing.T) {
 		ballots = append(ballots, ballot)
 	}
 
-	for i := 0; i < 16; i++ {
+	for i := 0; i < 26; i++ {
 		var ballot = election.NewBallot()
 		ballot.PushBack("Bob")
 		ballot.PushBack("Alice")
@@ -38,7 +38,7 @@ func TestMeekStv(t *testing.T) {
 		ballots = append(ballots, ballot)
 	}
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 3; i++ {
 		var ballot = election.NewBallot()
 		ballot.PushBack("Chris")
 		ballots = append(ballots, ballot)
