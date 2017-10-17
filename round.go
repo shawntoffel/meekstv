@@ -17,30 +17,37 @@ func (m *meekStv) IncrementRound() {
 }
 
 func (m *meekStv) DoRound() {
-	m.IncrementRound()
+	for {
+		m.IncrementRound()
 
-	converged := false
+		converged := false
 
-	for i := 0; i < m.MaxIterations; i++ {
+		for i := 0; i < m.MaxIterations; i++ {
 
-		m.DistributeVotes()
+			m.DistributeVotes()
 
-		m.UpdateQuota()
+			m.UpdateQuota()
 
-		if m.Converged() {
-			converged = true
+			converged = m.Converged()
+
+			if converged {
+				break
+			}
+		}
+
+		if !converged {
+			m.AddEvent(&events.FailedToConverge{m.MaxIterations})
+		}
+
+		count := m.ElectEligibleCandidates()
+
+		if count > 0 {
+			m.MeekRound.AnyElected = true
+		}
+
+		if m.RoundHasEnded() {
 			break
 		}
-	}
-
-	if !converged {
-		m.AddEvent(&events.FailedToConverge{m.MaxIterations})
-	}
-
-	count := m.ElectEligibleCandidates()
-
-	if count > 0 {
-		m.MeekRound.AnyElected = true
 	}
 }
 
