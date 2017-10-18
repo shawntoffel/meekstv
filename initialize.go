@@ -1,6 +1,7 @@
 package meekstv
 
 import (
+	"errors"
 	"github.com/shawntoffel/election"
 	"github.com/shawntoffel/math"
 	"github.com/shawntoffel/meekstv/events"
@@ -9,8 +10,10 @@ import (
 func (m *meekStv) SetupNumSeats(config election.Config) {
 	m.NumSeats = config.NumSeats
 
-	if m.NumSeats < 0 {
-		m.NumSeats = 0
+	if m.NumSeats < 1 {
+		err := errors.New("At least one seat is required for election.")
+
+		m.Error = err
 	}
 }
 
