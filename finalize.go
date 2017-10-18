@@ -5,17 +5,7 @@ import (
 )
 
 func (m *meekStv) Finalize() {
-	m.ExcludeRemainingCandidates()
-}
-
-func (m *meekStv) ExcludeRemainingCandidates() {
-	candidates := m.Pool.Candidates()
-
-	for _, candidate := range candidates {
-		if candidate.Status != Elected {
-			m.Pool.Exclude(candidate.Id)
-		}
-	}
+	m.Pool.ExcludeHopeful()
 
 	m.AddEvent(&events.RemainingCandidatesExcluded{})
 }

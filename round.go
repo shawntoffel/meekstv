@@ -20,35 +20,53 @@ func (m *meekStv) DoRound() {
 	for {
 		m.IncrementRound()
 
-		converged := false
-
-		for i := 0; i < m.MaxIterations; i++ {
-
-			m.DistributeVotes()
-
-			m.UpdateQuota()
-
-			converged = m.Converged()
-
-			if converged {
-				break
-			}
-		}
-
-		if !converged {
-			m.AddEvent(&events.FailedToConverge{m.MaxIterations})
-		}
-
-		count := m.ElectEligibleCandidates()
-
-		if count > 0 {
-			m.MeekRound.AnyElected = true
-		}
+		m.ComputeRound()
 
 		if m.RoundHasEnded() {
 			break
 		}
 	}
+
+	if !m.ElectionFinished() {
+		m.ExcludeLowestCandidate()
+
+		numCandidates := m.Pool.Count()
+		numExcluded := m.Pool.ExcludedCount()
+
+		if (numCandidates - numExcluded) == m.NumSeats {
+			m.ElectAllHopefulCandidates()
+		}
+	}
+}
+
+func (m *meekStv) ComputeRound() {
+	converged := false
+
+	for i := 0; i < m.MaxIterations; i++ {
+
+		m.DistributeVotes()
+
+		m.UpdateQuota()
+
+		converged = m.Converged()
+
+		if converged {
+			break
+		}
+	}
+
+	if !converged {
+		m.AddEvent(&events.FailedToConverge{m.MaxIterations})
+	}
+
+	count := m.ElectEligibleCandidates()
+
+	if count > 0 {
+		m.MeekRound.AnyElected = true
+	}
+}
+
+func (m *meekStv) Complete() {
 }
 
 func (m *meekStv) RoundHasEnded() bool {

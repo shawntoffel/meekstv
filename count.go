@@ -1,18 +1,12 @@
 package meekstv
 
-import (
-	"github.com/shawntoffel/meekstv/events"
-)
-
 func (m *meekStv) PerformPreliminaryCount() {
 	numCandidates := m.Pool.Count()
 	numExcluded := m.Pool.ExcludedCount()
 
 	if numCandidates <= (m.NumSeats + numExcluded) {
-		m.Pool.ElectHopeful()
+		m.ElectAllHopefulCandidates()
 		m.ElectedAll = true
-
-		m.AddEvent(&events.AllHopefulCandidatesElected{})
 	}
 }
 
