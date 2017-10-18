@@ -12,20 +12,23 @@ type Pool interface {
 	SetVotes(id string, votes int64)
 	Lowest() MeekCandidates
 	Candidates() MeekCandidates
-	CandidatesWithStatus(status CandidateStatus) MeekCandidates
 	Count() int
 	Elected() MeekCandidates
+	Hopeful() MeekCandidates
+	NewlyElected() MeekCandidates
+	Almost() MeekCandidates
 	ElectedCount() int
 	ExcludedCount() int
 	Elect(id string)
 	ElectAllNewlyElected()
 	NewlyElect(id string)
-	Almost(id string)
+	SetAlmost(id string)
 	ElectHopeful()
 	AddNewCandidates(candidates election.Candidates, scale int64)
 	Exclude(id string) *MeekCandidate
 	ExcludeHopeful()
 	SetWeight(id string, weight int64)
+	ZeroAllVotes()
 }
 
 type pool struct {
@@ -94,6 +97,18 @@ func (p *pool) Elected() MeekCandidates {
 	return p.CandidatesWithStatus(Elected)
 }
 
+func (p *pool) Hopeful() MeekCandidates {
+	return p.CandidatesWithStatus(Hopeful)
+}
+
+func (p *pool) NewlyElected() MeekCandidates {
+	return p.CandidatesWithStatus(NewlyElected)
+}
+
+func (p *pool) Almost() MeekCandidates {
+	return p.CandidatesWithStatus(Almost)
+}
+
 func (p *pool) ElectedCount() int {
 	elected := len(p.CandidatesWithStatus(Elected))
 	newlyElected := len(p.CandidatesWithStatus(NewlyElected))
@@ -125,7 +140,7 @@ func (p *pool) NewlyElect(id string) {
 	p.Storage[candidate.Id] = candidate
 }
 
-func (p *pool) Almost(id string) {
+func (p *pool) SetAlmost(id string) {
 	candidate := p.Candidate(id)
 
 	candidate.Status = Almost
@@ -202,6 +217,12 @@ func (p *pool) Exclude(id string) *MeekCandidate {
 	p.Storage[candidate.Id] = candidate
 
 	return p.Candidate(id)
+}
+
+func (p *pool) ZeroAllVotes() {
+	for _, candidate := range p.Candidates() {
+		p.SetVotes(candidate.Id, 0)
+	}
 }
 
 func List(storage Storage) MeekCandidates {

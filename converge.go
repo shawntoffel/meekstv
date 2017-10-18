@@ -7,16 +7,14 @@ import (
 func (m *meekStv) Converged() bool {
 	converged := true
 
-	candidates := m.Pool.Candidates()
+	candidates := m.Pool.Elected()
 
 	for _, candidate := range candidates {
-		if candidate.Status == Elected {
-			converged = m.TryConverge(candidate)
+		converged = m.TryConverge(candidate)
 
-			m.AddEvent(&events.TriedToConverge{converged})
+		m.AddEvent(&events.TriedToConverge{converged})
 
-			m.SettleWeight(candidate)
-		}
+		m.SettleWeight(candidate)
 	}
 
 	return converged

@@ -17,8 +17,29 @@ func (m *meekStv) IncrementRound() {
 }
 
 func (m *meekStv) DoRound() {
-	m.IncrementRound()
+	for {
+		m.IncrementRound()
 
+		m.ComputeRound()
+
+		if m.RoundHasEnded() {
+			break
+		}
+	}
+
+	if !m.ElectionFinished() {
+		m.ExcludeLowestCandidate()
+
+		numCandidates := m.Pool.Count()
+		numExcluded := m.Pool.ExcludedCount()
+
+		if (numCandidates - numExcluded) == m.NumSeats {
+			m.ElectAllHopefulCandidates()
+		}
+	}
+}
+
+func (m *meekStv) ComputeRound() {
 	converged := false
 
 	for i := 0; i < m.MaxIterations; i++ {
@@ -27,8 +48,9 @@ func (m *meekStv) DoRound() {
 
 		m.UpdateQuota()
 
-		if m.Converged() {
-			converged = true
+		converged = m.Converged()
+
+		if converged {
 			break
 		}
 	}
@@ -42,6 +64,9 @@ func (m *meekStv) DoRound() {
 	if count > 0 {
 		m.MeekRound.AnyElected = true
 	}
+}
+
+func (m *meekStv) Complete() {
 }
 
 func (m *meekStv) RoundHasEnded() bool {
