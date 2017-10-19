@@ -26,6 +26,7 @@ type Pool interface {
 	ElectHopeful()
 	AddNewCandidates(candidates election.Candidates, scale int64)
 	Exclude(id string) *MeekCandidate
+	ExcludeByName(name string) MeekCandidates
 	ExcludeHopeful()
 	SetWeight(id string, weight int64)
 	ZeroAllVotes()
@@ -217,6 +218,19 @@ func (p *pool) Exclude(id string) *MeekCandidate {
 	p.Storage[candidate.Id] = candidate
 
 	return p.Candidate(id)
+}
+
+func (p *pool) ExcludeByName(name string) MeekCandidates {
+
+	excluded := MeekCandidates{}
+	for _, candidate := range p.Candidates() {
+		if candidate.Name == name {
+			c := p.Exclude(candidate.Id)
+			excluded = append(excluded, *c)
+		}
+	}
+
+	return excluded
 }
 
 func (p *pool) ZeroAllVotes() {

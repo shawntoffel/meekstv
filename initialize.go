@@ -46,13 +46,14 @@ func (m *meekStv) SetupMaxIterations(config election.Config) {
 	m.MaxIterations = 1000
 }
 
-func (m *meekStv) ExcludeWithdrawnCandidates(ids []string) {
+func (m *meekStv) ExcludeWithdrawnCandidates(names []string) {
 	excluded := []string{}
 
-	for _, id := range ids {
-		candidate := m.Pool.Exclude(id)
+	for _, name := range names {
+		candidates := m.Pool.ExcludeByName(name)
 
-		if candidate != nil {
+		for _, candidate := range candidates {
+
 			excluded = append(excluded, candidate.Name)
 		}
 	}
