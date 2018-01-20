@@ -20,6 +20,7 @@ type MeekCandidate struct {
 	Status CandidateStatus
 	Weight int64
 	Votes  int64
+	Rank   int
 }
 
 type ByVotes MeekCandidates
@@ -40,6 +41,7 @@ func (meekCandidate *MeekCandidate) AsCandidate() election.Candidate {
 	c := election.Candidate{}
 	c.Id = meekCandidate.Id
 	c.Name = meekCandidate.Name
+	c.Rank = meekCandidate.Rank
 
 	return c
 }

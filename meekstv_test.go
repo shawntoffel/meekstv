@@ -77,7 +77,7 @@ func TestMeekStv(t *testing.T) {
 	}
 
 	for _, c := range result.Candidates {
-		fmt.Println(c.Name)
+		fmt.Println(c.Rank, c.Name)
 	}
 
 	count := len(result.Candidates)
@@ -86,5 +86,4 @@ func TestMeekStv(t *testing.T) {
 	if count != expectedCount {
 		t.Errorf("Incorrect number of elected candidates. Expected: %d, Got: %d", expectedCount, count)
 	}
-
 }
