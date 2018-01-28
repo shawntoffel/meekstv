@@ -137,7 +137,6 @@ func (p *pool) NewlyElect(id string) {
 	candidate := p.Candidate(id)
 
 	candidate.Status = NewlyElected
-	candidate.Rank = p.ElectedCount()
 
 	p.Storage[candidate.Id] = candidate
 }

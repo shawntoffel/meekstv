@@ -48,10 +48,7 @@ func (m *meekStv) ProcessNewlyElectedCandidates() {
 		}
 
 		m.Pool.Elect(candidate.Id)
-
-		rankedCandidate := m.Pool.Candidate(candidate.Id)
-
-		m.AddEvent(&events.Elected{rankedCandidate.Name, rankedCandidate.Rank})
+		m.AddEvent(&events.Elected{candidate.Name})
 	}
 }
 
