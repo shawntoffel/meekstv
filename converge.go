@@ -10,17 +10,17 @@ func (m *meekStv) Converged() bool {
 	candidates := m.Pool.Elected()
 
 	for _, candidate := range candidates {
-		converged = m.TryConverge(candidate)
+		converged = m.TryConverge(*candidate)
 
 		m.AddEvent(&events.TriedToConverge{Success: converged})
 
-		m.SettleWeight(candidate)
+		m.SettleWeight(*candidate)
 	}
 
 	return converged
 }
 
-func (m *meekStv) TryConverge(candidate *MeekCandidate) bool {
+func (m *meekStv) TryConverge(candidate MeekCandidate) bool {
 
 	currentWeight := (m.Quota * m.Scale) / candidate.Votes
 
@@ -34,7 +34,7 @@ func (m *meekStv) TryConverge(candidate *MeekCandidate) bool {
 	return true
 }
 
-func (m *meekStv) SettleWeight(candidate *MeekCandidate) {
+func (m *meekStv) SettleWeight(candidate MeekCandidate) {
 	newWeight := (m.Quota * candidate.Weight) / candidate.Votes
 
 	remainder := newWeight % candidate.Votes
