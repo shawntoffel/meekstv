@@ -12,5 +12,5 @@ type FailedToConverge struct {
 func (e *FailedToConverge) Process() election.Event {
 	description := fmt.Sprintf("Failed to converge in %d iterations.", e.MaxIterations)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

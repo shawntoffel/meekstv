@@ -21,5 +21,5 @@ func (e *Initialized) Process() election.Event {
 
 	description := buffer.String()
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

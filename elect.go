@@ -1,9 +1,10 @@
 package meekstv
 
 import (
-	"github.com/shawntoffel/meekstv/events"
 	"math/rand"
 	"time"
+
+	"github.com/shawntoffel/meekstv/events"
 )
 
 func (m *meekStv) ElectEligibleCandidates() int {
@@ -26,7 +27,7 @@ func (m *meekStv) FindEligibleCandidates() int {
 			count = count + 1
 			m.Pool.SetAlmost(candidate.Id)
 
-			m.AddEvent(&events.AlmostElected{candidate.Name})
+			m.AddEvent(&events.AlmostElected{Name: candidate.Name})
 		}
 	}
 
@@ -44,14 +45,11 @@ func (m *meekStv) ProcessNewlyElectedCandidates() {
 
 			m.Pool.SetWeight(candidate.Id, newWeight)
 
-			m.AddEvent(&events.WeightAdjusted{candidate.Name, newWeight})
+			m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, NewWeight: newWeight})
 		}
 
 		m.Pool.Elect(candidate.Id)
-
-		rankedCandidate := m.Pool.Candidate(candidate.Id)
-
-		m.AddEvent(&events.Elected{rankedCandidate.Name, rankedCandidate.Rank})
+		m.AddEvent(&events.Elected{Name: candidate.Name})
 	}
 }
 
@@ -104,5 +102,5 @@ func (m *meekStv) ExcludeLowestCandidate() {
 	}
 
 	m.Pool.Exclude(toExclude.Id)
-	m.AddEvent(&events.LowestCandidateExcluded{toExclude.Name, randomUsed})
+	m.AddEvent(&events.LowestCandidateExcluded{Name: toExclude.Name, RandomUsed: randomUsed})
 }

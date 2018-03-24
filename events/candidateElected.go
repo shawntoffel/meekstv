@@ -7,11 +7,10 @@ import (
 
 type Elected struct {
 	Name string
-	Rank int
 }
 
 func (e *Elected) Process() election.Event {
-	description := fmt.Sprintf("%s has been elected with rank %d.", e.Name, e.Rank)
+	description := fmt.Sprintf("%s has been elected.", e.Name)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

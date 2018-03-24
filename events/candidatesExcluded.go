@@ -12,5 +12,5 @@ type CandidatesExcluded struct {
 func (e *CandidatesExcluded) Process() election.Event {
 	description := fmt.Sprintf("The following candidates have been excluded: %v", e.Names)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

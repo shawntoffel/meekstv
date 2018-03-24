@@ -19,5 +19,5 @@ func (e *LowestCandidateExcluded) Process() election.Event {
 		description = fmt.Sprintf("%s has the lowest number of votes and is excluded.", e.Name)
 	}
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

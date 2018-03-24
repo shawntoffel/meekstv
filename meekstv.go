@@ -38,7 +38,7 @@ func (m *meekStv) Initialize(config election.Config) error {
 	m.SetupPool(config)
 	m.SetupMaxIterations(config)
 
-	m.AddEvent(&events.Initialized{config})
+	m.AddEvent(&events.Initialized{Config: config})
 
 	return m.Error
 }

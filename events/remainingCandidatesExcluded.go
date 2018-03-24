@@ -11,5 +11,5 @@ type RemainingCandidatesExcluded struct {
 func (e *RemainingCandidatesExcluded) Process() election.Event {
 	description := "All remaining candidates have been excluded."
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

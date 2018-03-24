@@ -12,5 +12,5 @@ type QuotaUpdated struct {
 func (e *QuotaUpdated) Process() election.Event {
 	description := fmt.Sprintf("Quota has been updated to: %d", e.Quota)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }
