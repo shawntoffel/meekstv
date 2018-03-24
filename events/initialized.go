@@ -3,6 +3,7 @@ package events
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/shawntoffel/election"
 )
 
@@ -18,6 +19,7 @@ func (e *Initialized) Process() election.Event {
 	buffer.WriteString(fmt.Sprintf(", Ballots: %d", len(e.Config.Ballots)))
 	buffer.WriteString(fmt.Sprintf(", Seats: %d", e.Config.NumSeats))
 	buffer.WriteString(fmt.Sprintf(", Precision: %d", e.Config.Precision))
+	buffer.WriteString(fmt.Sprintf(", Seed: %d", e.Config.Seed))
 
 	description := buffer.String()
 

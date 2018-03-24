@@ -128,6 +128,7 @@ func generateTestConfig() election.Config {
 
 	config.NumSeats = 3
 	config.Precision = 6
+	config.Seed = 1
 
 	return config
 }

@@ -47,6 +47,10 @@ func (m *meekStv) SetupMaxIterations(config election.Config) {
 	m.MaxIterations = 1000
 }
 
+func (m *meekStv) SetupSeed(config election.Config) {
+	m.Seed = config.Seed
+}
+
 func (m *meekStv) ExcludeWithdrawnCandidates(names []string) {
 	excluded := []string{}
 

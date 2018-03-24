@@ -2,7 +2,6 @@ package meekstv
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/shawntoffel/meekstv/events"
 )
@@ -93,7 +92,7 @@ func (m *meekStv) ExcludeLowestCandidate() {
 	randomUsed := false
 
 	if len(lowestCandidates) > 1 {
-		seed := rand.NewSource(time.Now().Unix())
+		seed := rand.NewSource(m.Seed)
 		r := rand.New(seed)
 		i := r.Intn(len(lowestCandidates))
 		toExclude = lowestCandidates[i]
