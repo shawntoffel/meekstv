@@ -48,7 +48,7 @@ func (m *meekStv) ProcessNewlyElectedCandidates() {
 		}
 
 		m.Pool.Elect(candidate.Id)
-		m.AddEvent(&events.Elected{Name: candidate.Name})
+		m.AddEvent(&events.Elected{Name: candidate.Name, Rank: candidate.Rank})
 	}
 }
 

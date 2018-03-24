@@ -20,7 +20,7 @@ func TestMeekStv(t *testing.T) {
 	t.Log("Events:", len(result.Events))
 
 	for _, c := range result.Candidates {
-		t.Log(c.Name)
+		t.Log(c.Rank, c.Name)
 	}
 
 	verifyMeekStvResults(result, t)
