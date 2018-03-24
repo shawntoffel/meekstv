@@ -40,6 +40,7 @@ func (meekCandidate *MeekCandidate) AsCandidate() election.Candidate {
 	c := election.Candidate{}
 	c.Id = meekCandidate.Id
 	c.Name = meekCandidate.Name
+	c.Rank = meekCandidate.Rank
 
 	return c
 }

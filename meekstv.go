@@ -21,6 +21,7 @@ type meekStv struct {
 	MaxIterations int
 	ElectedAll    bool
 	MeekRound     MeekRound
+	Seed          int64
 }
 
 func NewMeekStv() MeekStv {
@@ -37,6 +38,7 @@ func (m *meekStv) Initialize(config election.Config) error {
 	m.SetupBallots(config)
 	m.SetupPool(config)
 	m.SetupMaxIterations(config)
+	m.SetupSeed(config)
 
 	m.AddEvent(&events.Initialized{Config: config})
 
