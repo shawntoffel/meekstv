@@ -1,15 +1,64 @@
 package meekstv
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/shawntoffel/election"
 )
 
 func TestMeekStv(t *testing.T) {
+	result, err := runMeekStv(generateTestConfig())
 
-	var config = election.Config{}
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	for _, e := range result.Events {
+		t.Log(e.Description)
+	}
+
+	t.Log("Events:", len(result.Events))
+
+	for _, c := range result.Candidates {
+		t.Log(c.Name)
+	}
+
+	verifyMeekStvResults(result, t)
+}
+func TestElectionOrder(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		result, err := runMeekStv(generateTestConfig())
+
+		if err != nil {
+			t.Errorf(err.Error())
+		}
+
+		verifyMeekStvResults(result, t)
+	}
+}
+
+func verifyMeekStvResults(result *election.Result, t *testing.T) {
+	count := len(result.Candidates)
+
+	expectedCount := 3
+
+	if count != expectedCount {
+		t.Errorf("Incorrect number of elected candidates. Expected: %d, Got: %d", expectedCount, count)
+	}
+
+	order := []string{"Alice", "Bob", "Chris"}
+
+	for i, candidate := range result.Candidates {
+		expected := order[i]
+
+		if candidate.Name != expected {
+			t.Errorf("Elected candidate is incorrect for rank %d. Expected: %d, Got: %d", i, expected, candidate.Name)
+		}
+	}
+}
+
+func generateTestConfig() election.Config {
+	config := election.Config{}
 
 	names := []string{"Alice", "Bob", "Chris", "Don", "Eric", "Frank"}
 
@@ -61,36 +110,13 @@ func TestMeekStv(t *testing.T) {
 	config.NumSeats = 3
 	config.Precision = 6
 
+	return config
+}
+
+func runMeekStv(config election.Config) (*election.Result, error) {
 	mstv := NewMeekStv()
 
 	mstv.Initialize(config)
 
-	result, err := mstv.Count()
-
-	if err != nil {
-		t.Error(err.Error())
-	}
-
-	fmt.Println("Events:", len(result.Events))
-
-	for _, e := range result.Events {
-		fmt.Println(e.Description)
-	}
-
-	for _, c := range result.Candidates {
-		fmt.Println(c.Name)
-	}
-
-	count := len(result.Candidates)
-	expectedCount := 3
-
-	if count != expectedCount {
-		t.Errorf("Incorrect number of elected candidates. Expected: %d, Got: %d", expectedCount, count)
-	}
-
-	first := result.Candidates[0]
-	if result.Candidates[0].Name != "Alice" {
-		t.Errorf("Expected: %d, Got: %d", "Alice", first.Name)
-	}
-
+	return mstv.Count()
 }
