@@ -34,41 +34,45 @@ func TestElectionOrder(t *testing.T) {
 			t.Errorf(err.Error())
 		}
 
-		verifyMeekStvResults(result, t)
+		success := verifyMeekStvResults(result, t)
+
+		if !success {
+			t.Errorf("Failed on iteration: %d", i+1)
+			break
+		}
 	}
 }
 
-func verifyMeekStvResults(result *election.Result, t *testing.T) {
+func verifyMeekStvResults(result *election.Result, t *testing.T) bool {
 	count := len(result.Candidates)
 
 	expectedCount := 3
 
 	if count != expectedCount {
 		t.Errorf("Incorrect number of elected candidates. Expected: %d, Got: %d", expectedCount, count)
-	}
 
-	expected := []string{"Alice", "Bob", "Chris"}
-
-	got := []string{}
-
-	for _, candidate := range result.Candidates {
-		got = append(got, candidate.Name)
-	}
-
-	orderMatches := verifyElectionOrder(expected, got)
-
-	if !orderMatches {
-		t.Errorf("Election order is incorrect. Expected: %v, Got: %v", expected, got)
-	}
-}
-
-func verifyElectionOrder(expected []string, got []string) bool {
-	if len(expected) != len(got) {
 		return false
 	}
 
-	for i, value := range expected {
-		if value != got[i] {
+	names := []string{"Alice", "Bob", "Chris"}
+
+	expected := election.Candidates{}
+	for i, name := range names {
+		c := election.Candidate{}
+		c.Id = name
+		c.Name = name
+		c.Rank = i + 1
+
+		expected = append(expected, c)
+	}
+
+	for i, got := range result.Candidates {
+
+		expectedCandidate := expected[i]
+
+		if got.Rank != expectedCandidate.Rank || got.Name != expectedCandidate.Name {
+			t.Errorf("Election order is incorrect. Expected: %v, Got: %v", expected, result.Candidates)
+
 			return false
 		}
 	}
