@@ -25,6 +25,7 @@ func TestMeekStv(t *testing.T) {
 
 	verifyMeekStvResults(result, t)
 }
+
 func TestElectionOrder(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		result, err := runMeekStv(generateTestConfig())
@@ -46,15 +47,33 @@ func verifyMeekStvResults(result *election.Result, t *testing.T) {
 		t.Errorf("Incorrect number of elected candidates. Expected: %d, Got: %d", expectedCount, count)
 	}
 
-	order := []string{"Alice", "Bob", "Chris"}
+	expected := []string{"Alice", "Bob", "Chris"}
 
-	for i, candidate := range result.Candidates {
-		expected := order[i]
+	got := []string{}
 
-		if candidate.Name != expected {
-			t.Errorf("Elected candidate is incorrect for rank %d. Expected: %d, Got: %d", i, expected, candidate.Name)
+	for _, candidate := range result.Candidates {
+		got = append(got, candidate.Name)
+	}
+
+	orderMatches := verifyElectionOrder(expected, got)
+
+	if !orderMatches {
+		t.Errorf("Election order is incorrect. Expected: %v, Got: %v", expected, got)
+	}
+}
+
+func verifyElectionOrder(expected []string, got []string) bool {
+	if len(expected) != len(got) {
+		return false
+	}
+
+	for i, value := range expected {
+		if value != got[i] {
+			return false
 		}
 	}
+
+	return true
 }
 
 func generateTestConfig() election.Config {
