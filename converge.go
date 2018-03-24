@@ -12,7 +12,7 @@ func (m *meekStv) Converged() bool {
 	for _, candidate := range candidates {
 		converged = m.TryConverge(candidate)
 
-		m.AddEvent(&events.TriedToConverge{converged})
+		m.AddEvent(&events.TriedToConverge{Success: converged})
 
 		m.SettleWeight(candidate)
 	}
@@ -49,7 +49,7 @@ func (m *meekStv) SettleWeight(candidate *MeekCandidate) {
 
 	m.Pool.SetWeight(candidate.Id, newWeight)
 
-	m.AddEvent(&events.WeightAdjusted{candidate.Name, newWeight})
+	m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, NewWeight: newWeight})
 }
 
 func (m *meekStv) UpperWeightBound() int64 {

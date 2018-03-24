@@ -2,6 +2,7 @@ package meekstv
 
 import (
 	"errors"
+
 	"github.com/shawntoffel/election"
 	"github.com/shawntoffel/math"
 	"github.com/shawntoffel/meekstv/events"
@@ -58,5 +59,5 @@ func (m *meekStv) ExcludeWithdrawnCandidates(names []string) {
 		}
 	}
 
-	m.AddEvent(&events.CandidatesExcluded{excluded})
+	m.AddEvent(&events.CandidatesExcluded{Names: excluded})
 }

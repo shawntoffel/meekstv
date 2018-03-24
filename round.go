@@ -13,7 +13,7 @@ func (m *meekStv) IncrementRound() {
 	m.Round = m.Round + 1
 	m.MeekRound = MeekRound{}
 
-	m.AddEvent(&events.RoundStarted{m.Round})
+	m.AddEvent(&events.RoundStarted{Round: m.Round})
 }
 
 func (m *meekStv) DoRound() {
@@ -56,7 +56,7 @@ func (m *meekStv) ComputeRound() {
 	}
 
 	if !converged {
-		m.AddEvent(&events.FailedToConverge{m.MaxIterations})
+		m.AddEvent(&events.FailedToConverge{MaxIterations: m.MaxIterations})
 	}
 
 	count := m.ElectEligibleCandidates()
