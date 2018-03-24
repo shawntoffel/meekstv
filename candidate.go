@@ -14,7 +14,7 @@ const (
 	Almost       CandidateStatus = "Almost"
 )
 
-type MeekCandidates []MeekCandidate
+type MeekCandidates []*MeekCandidate
 type MeekCandidate struct {
 	election.Candidate
 	Status CandidateStatus
