@@ -1,11 +1,10 @@
 package meekstv
 
 import (
-	"github.com/shawntoffel/election"
 	"sort"
-)
 
-type Storage map[string]*MeekCandidate
+	"github.com/shawntoffel/election"
+)
 
 type Pool interface {
 	Candidate(id string) *MeekCandidate
@@ -33,44 +32,39 @@ type Pool interface {
 }
 
 type pool struct {
-	Storage Storage
+	//Storage Storage
+	MeekCandidates MeekCandidates
 }
 
 func NewPool() Pool {
 	p := pool{}
-	p.Storage = make(Storage)
 	return &p
 }
 
 func (p *pool) Candidate(id string) *MeekCandidate {
-	return p.Storage[id]
+	for _, candidate := range p.MeekCandidates {
+		if candidate.Id == id {
+			return candidate
+		}
+	}
+
+	return nil
 }
 
 func (p *pool) SetVotes(id string, votes int64) {
 	candidate := p.Candidate(id)
 
 	candidate.Votes = votes
-
-	p.Storage[candidate.Id] = candidate
 }
 
 func (p *pool) SetWeight(id string, weight int64) {
 	candidate := p.Candidate(id)
 
 	candidate.Weight = weight
-
-	p.Storage[candidate.Id] = candidate
 }
 
 func (p *pool) Candidates() MeekCandidates {
-	candidates := MeekCandidates{}
-
-	list := List(p.Storage)
-	for _, candidate := range list {
-		candidates = append(candidates, candidate)
-	}
-
-	return candidates
+	return p.MeekCandidates
 }
 
 func (p *pool) CandidatesWithStatus(status CandidateStatus) MeekCandidates {
@@ -87,7 +81,7 @@ func (p *pool) CandidatesWithStatus(status CandidateStatus) MeekCandidates {
 }
 
 func (p *pool) Count() int {
-	return len(List(p.Storage))
+	return len(p.MeekCandidates)
 }
 
 func (p *pool) ExcludedCount() int {
@@ -121,8 +115,6 @@ func (p *pool) Elect(id string) {
 	candidate := p.Candidate(id)
 
 	candidate.Status = Elected
-
-	p.Storage[candidate.Id] = candidate
 }
 
 func (p *pool) ElectAllNewlyElected() {
@@ -137,16 +129,12 @@ func (p *pool) NewlyElect(id string) {
 	candidate := p.Candidate(id)
 
 	candidate.Status = NewlyElected
-
-	p.Storage[candidate.Id] = candidate
 }
 
 func (p *pool) SetAlmost(id string) {
 	candidate := p.Candidate(id)
 
 	candidate.Status = Almost
-
-	p.Storage[candidate.Id] = candidate
 }
 
 func (p *pool) ElectHopeful() {
@@ -201,7 +189,7 @@ func (p *pool) AddNewCandidates(candidates election.Candidates, scale int64) {
 		meekCandidate.Status = Hopeful
 		meekCandidate.Votes = 0
 
-		p.Storage[c.Id] = &meekCandidate
+		p.MeekCandidates = append(p.MeekCandidates, &meekCandidate)
 	}
 }
 
@@ -215,7 +203,6 @@ func (p *pool) Exclude(id string) *MeekCandidate {
 	candidate.Weight = 0
 	candidate.Votes = 0
 	candidate.Status = Excluded
-	p.Storage[candidate.Id] = candidate
 
 	return p.Candidate(id)
 }
@@ -226,7 +213,7 @@ func (p *pool) ExcludeByName(name string) MeekCandidates {
 	for _, candidate := range p.Candidates() {
 		if candidate.Name == name {
 			c := p.Exclude(candidate.Id)
-			excluded = append(excluded, *c)
+			excluded = append(excluded, c)
 		}
 	}
 
@@ -237,14 +224,4 @@ func (p *pool) ZeroAllVotes() {
 	for _, candidate := range p.Candidates() {
 		p.SetVotes(candidate.Id, 0)
 	}
-}
-
-func List(storage Storage) MeekCandidates {
-	list := MeekCandidates{}
-
-	for _, value := range storage {
-		list = append(list, *value)
-	}
-
-	return list
 }

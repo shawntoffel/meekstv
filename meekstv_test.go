@@ -2,8 +2,9 @@ package meekstv
 
 import (
 	"fmt"
-	"github.com/shawntoffel/election"
 	"testing"
+
+	"github.com/shawntoffel/election"
 )
 
 func TestMeekStv(t *testing.T) {
@@ -85,6 +86,11 @@ func TestMeekStv(t *testing.T) {
 
 	if count != expectedCount {
 		t.Errorf("Incorrect number of elected candidates. Expected: %d, Got: %d", expectedCount, count)
+	}
+
+	first := result.Candidates[0]
+	if result.Candidates[0].Name != "Alice" {
+		t.Errorf("Expected: %d, Got: %d", "Alice", first.Name)
 	}
 
 }
