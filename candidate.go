@@ -1,6 +1,8 @@
 package meekstv
 
 import (
+	"sort"
+
 	"github.com/shawntoffel/election"
 )
 
@@ -54,5 +56,9 @@ func (meekCandidates MeekCandidates) AsCandidates() election.Candidates {
 		candidates = append(candidates, candidate)
 	}
 
-	return candidates
+	sorted := candidates
+
+	sort.Sort(election.ByRank(sorted))
+
+	return sorted
 }
