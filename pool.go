@@ -32,13 +32,11 @@ type Pool interface {
 }
 
 type pool struct {
-	//Storage Storage
 	MeekCandidates MeekCandidates
 }
 
 func NewPool() Pool {
-	p := pool{}
-	return &p
+	return &pool{}
 }
 
 func (p *pool) Candidate(id string) *MeekCandidate {
