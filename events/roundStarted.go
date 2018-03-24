@@ -12,5 +12,5 @@ type RoundStarted struct {
 func (e *RoundStarted) Process() election.Event {
 	description := fmt.Sprintf("Round %d has started.", e.Round)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

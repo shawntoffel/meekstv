@@ -12,5 +12,5 @@ type AlmostElected struct {
 func (e *AlmostElected) Process() election.Event {
 	description := fmt.Sprintf("%s has reached the quota and is pending election.", e.Name)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

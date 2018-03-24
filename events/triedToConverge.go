@@ -17,5 +17,5 @@ func (e *TriedToConverge) Process() election.Event {
 		description = "Failed to converge. Adjusting weights for further vote distribution."
 	}
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

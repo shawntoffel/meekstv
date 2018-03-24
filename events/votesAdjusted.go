@@ -13,5 +13,5 @@ type VotesAdjusted struct {
 func (e *VotesAdjusted) Process() election.Event {
 	description := fmt.Sprintf("%s now has %d votes.", e.Name, e.Votes)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }

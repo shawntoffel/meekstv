@@ -12,5 +12,5 @@ type Elected struct {
 func (e *Elected) Process() election.Event {
 	description := fmt.Sprintf("%s has been elected.", e.Name)
 
-	return election.Event{description}
+	return election.Event{Description: description}
 }
