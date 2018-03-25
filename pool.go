@@ -110,10 +110,11 @@ func (p *pool) ElectedCount() int {
 }
 
 func (p *pool) Elect(id string) {
-	candidate := p.Candidate(id)
+	elected := len(p.Elected())
 
+	candidate := p.Candidate(id)
 	candidate.Status = Elected
-	candidate.Rank = len(p.Elected())
+	candidate.Rank = elected + 1
 }
 
 func (p *pool) ElectAllNewlyElected() {
