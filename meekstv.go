@@ -47,21 +47,28 @@ func (m *meekStv) Initialize(config election.Config) error {
 
 func (m *meekStv) Count() (*election.Result, error) {
 	m.PerformPreliminaryCount()
-
-	for _, ballot := range m.Ballots {
-		ballot.Weight = m.Scale
-	}
-
-	m.DoRound()
 	/*
-		for {
-			if m.HasEnded() {
-				break
-			}
+		m.UpdateQuota()
+		m.IncrementRound()
 
-			m.DoRound()
+		for _, c := range m.Pool.Candidates() {
+			m.GiveVotesToCandidate(*c, c.InitialVotes*c.Weight/m.Scale)
 		}
-	*/
+
+		m.ElectEligibleCandidates()
+		for _, candidate := range m.Pool.Candidates() {
+			m.SettleWeight(*candidate)
+		}*/
+	//m.DoRound()
+
+	//m.DistributeVotes()
+	for {
+		m.DoRound()
+		if m.HasEnded() {
+			break
+		}
+
+	}
 	m.Finalize()
 
 	return m.Result()

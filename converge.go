@@ -35,6 +35,13 @@ func (m *meekStv) TryConverge(candidate MeekCandidate) bool {
 }
 
 func (m *meekStv) SettleWeight(candidate MeekCandidate) {
+	if candidate.Votes == 0 {
+		return
+	}
+
+	if candidate.Status != "Elected" {
+		return
+	}
 	newWeight := (m.Quota * candidate.Weight) / candidate.Votes
 
 	remainder := newWeight % candidate.Votes

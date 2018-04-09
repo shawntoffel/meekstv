@@ -14,6 +14,10 @@ func (m *meekStv) UpdateQuota() {
 
 	m.Quota = (int64(total) - m.MeekRound.Excess) * m.Droop() / m.Scale
 
+	if prevQuota == 0 {
+		m.Quota = m.Quota + m.Scale
+	}
+
 	scaleBound := m.GetScaleBound()
 
 	if m.Quota < scaleBound {

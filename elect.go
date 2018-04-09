@@ -40,11 +40,13 @@ func (m *meekStv) ProcessNewlyElectedCandidates() {
 		electedCount := m.Pool.ElectedCount()
 
 		if electedCount < m.NumSeats {
-			newWeight := (m.Quota * m.Scale) / candidate.Votes
+			//m.SettleWeight(*candidate)
+			/*
+				newWeight := (m.Quota * m.Scale) / candidate.Votes
 
-			m.Pool.SetWeight(candidate.Id, newWeight)
+				m.Pool.SetWeight(candidate.Id, newWeight)
 
-			m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, NewWeight: newWeight})
+				m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, NewWeight: newWeight})*/
 		}
 
 		m.Pool.Elect(candidate.Id)

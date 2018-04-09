@@ -19,9 +19,10 @@ const (
 type MeekCandidates []*MeekCandidate
 type MeekCandidate struct {
 	election.Candidate
-	Status CandidateStatus
-	Weight int64
-	Votes  int64
+	Status       CandidateStatus
+	Weight       int64
+	Votes        int64
+	InitialVotes int64
 }
 
 type ByVotes MeekCandidates
