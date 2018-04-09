@@ -12,11 +12,7 @@ func (m *meekStv) UpdateQuota() {
 	total := int64(m.Ballots.Total()) * m.Scale
 	prevQuota := m.Quota
 
-	m.Quota = (int64(total) - m.MeekRound.Excess) * m.Droop() / m.Scale
-
-	if prevQuota == 0 {
-		m.Quota = m.Quota + m.Scale
-	}
+	m.Quota = (int64(total) - m.MeekRound.Excess) * m.Droop() / m.Scale  + m.Scale
 
 	scaleBound := m.GetScaleBound()
 
