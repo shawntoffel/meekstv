@@ -48,14 +48,20 @@ func (m *meekStv) Initialize(config election.Config) error {
 func (m *meekStv) Count() (*election.Result, error) {
 	m.PerformPreliminaryCount()
 
-	for {
-		if m.HasEnded() {
-			break
-		}
-
-		m.DoRound()
+	for _, ballot := range m.Ballots {
+		ballot.Weight = m.Scale
 	}
 
+	m.DoRound()
+	/*
+		for {
+			if m.HasEnded() {
+				break
+			}
+
+			m.DoRound()
+		}
+	*/
 	m.Finalize()
 
 	return m.Result()

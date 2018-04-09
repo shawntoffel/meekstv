@@ -11,7 +11,7 @@ func (m *meekStv) DistributeVotes() {
 	m.Pool.ZeroAllVotes()
 
 	for _, ballot := range m.Ballots {
-		m.DistributeAmongstBallot(ballot)
+		m.DistributeAmongstBallot(*ballot)
 	}
 
 	m.AddEvent(&events.VotesDistributed{})
@@ -73,5 +73,5 @@ func (m *meekStv) GiveVotesToCandidate(meekCandidate MeekCandidate, votes int64)
 
 	m.Pool.SetVotes(meekCandidate.Id, newVotes)
 
-	m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Votes: newVotes})
+	m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Existing: oldVotes, Total: newVotes})
 }

@@ -17,26 +17,59 @@ func (m *meekStv) IncrementRound() {
 }
 
 func (m *meekStv) DoRound() {
-	for {
-		m.IncrementRound()
 
-		m.ComputeRound()
+	m.IncrementRound()
+	m.UpdateQuota()
 
-		if m.RoundHasEnded() {
-			break
+	for _, ballot := range m.Ballots {
+		remainder := m.Scale
+
+		iter := ballot.Ballot.List.Front()
+
+		for {
+			candidate := m.Pool.Candidate(iter.Value.(string))
+
+			votes := remainder * candidate.Weight * ballot.Weight / m.Scale
+			m.GiveVotesToCandidate(*candidate, votes)
+
+			remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
+
+			if remainder == 0 {
+				break
+			}
+
+			if iter.Next() == nil {
+				break
+			}
+
+			iter = iter.Next()
 		}
 	}
 
-	if !m.ElectionFinished() {
-		m.ExcludeLowestCandidate()
+	m.ElectEligibleCandidates()
 
-		numCandidates := m.Pool.Count()
-		numExcluded := m.Pool.ExcludedCount()
+	/*
 
-		if (numCandidates - numExcluded) == m.NumSeats {
-			m.ElectAllHopefulCandidates()
+		for {
+			m.IncrementRound()
+
+			m.ComputeRound()
+
+			if m.RoundHasEnded() {
+				break
+			}
 		}
-	}
+
+		if !m.ElectionFinished() {
+			m.ExcludeLowestCandidate()
+
+			numCandidates := m.Pool.Count()
+			numExcluded := m.Pool.ExcludedCount()
+
+			if (numCandidates - numExcluded) == m.NumSeats {
+				m.ElectAllHopefulCandidates()
+			}
+		}*/
 }
 
 func (m *meekStv) ComputeRound() {
