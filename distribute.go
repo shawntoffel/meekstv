@@ -18,7 +18,7 @@ func (m *meekStv) DistributeVotes() {
 }
 
 func (m *meekStv) DistributeAmongstBallot(ballot election.RolledUpBallot) {
-	value := int64(ballot.Count) * m.Scale
+	remainder := int64(ballot.Count) * m.Scale
 
 	ended := false
 
@@ -30,9 +30,13 @@ func (m *meekStv) DistributeAmongstBallot(ballot election.RolledUpBallot) {
 		if !ended && candidate.Weight > 0 {
 			ended = candidate.Status == Hopeful
 
-			value = m.DistributeCandidateVotes(*candidate, value, ended)
+			remainder = m.DistributeCandidateVotes(*candidate, remainder, ended)
 		}
 
+		if remainder == 0 {
+			break
+		}
+		
 		if iter.Next() == nil {
 			break
 		}
@@ -40,7 +44,7 @@ func (m *meekStv) DistributeAmongstBallot(ballot election.RolledUpBallot) {
 		iter = iter.Next()
 	}
 
-	m.MeekRound.Excess = m.MeekRound.Excess + value
+	m.MeekRound.Excess = m.MeekRound.Excess + remainder
 
 	m.AddEvent(&events.ExcessUpdated{Excess: m.MeekRound.Excess})
 }
