@@ -5,7 +5,9 @@ import (
 )
 
 type MeekRound struct {
+	Round      int
 	Excess     int64
+	Surplus    int64
 	AnyElected bool
 }
 
@@ -14,9 +16,10 @@ func (m *meekStv) doRound() {
 	m.distributeVotes()
 	m.updateExcessVotesForRound()
 	m.updateQuota()
+	m.updateSurplus()
 
 	count := m.electEligibleCandidates()
-	m.MeekRound.AnyElected = count > 0
+	m.currentMeekRound().AnyElected = count > 0
 
 	if m.electionFinished() {
 		return
@@ -26,7 +29,7 @@ func (m *meekStv) doRound() {
 		m.settleWeight(*candidate)
 	}
 
-	if m.MeekRound.AnyElected {
+	if m.currentMeekRound().AnyElected {
 		return
 	}
 
@@ -38,10 +41,10 @@ func (m *meekStv) doRound() {
 }
 
 func (m *meekStv) incrementRound() {
-	m.Round = m.Round + 1
-	m.MeekRound = MeekRound{}
+	round := len(m.meekRounds) + 1
+	m.meekRounds = append(m.meekRounds, &MeekRound{Round: round})
 
-	m.AddEvent(&events.RoundStarted{Round: m.Round})
+	m.AddEvent(&events.RoundStarted{Round: round})
 
 	m.Pool.ZeroAllVotes()
 }
@@ -55,10 +58,46 @@ func (m *meekStv) updateExcessVotesForRound() {
 		votes = votes + c.Votes
 	}
 
-	m.MeekRound.Excess = exhausted - votes
-	m.AddEvent(&events.ExcessUpdated{Excess: m.MeekRound.Excess})
+	m.currentMeekRound().Excess = exhausted - votes
+	m.AddEvent(&events.ExcessUpdated{Excess: m.currentMeekRound().Excess})
 }
 
 func (m *meekStv) canExcludeMoreCandidates() bool {
 	return m.Pool.Count()-m.Pool.ExcludedCount() > m.NumSeats
+}
+
+func (m *meekStv) updateSurplus() {
+	candidates := append(m.Pool.Elected(), m.Pool.Hopeful()...)
+	round := m.currentMeekRound()
+
+	for _, candidate := range candidates {
+		if candidate.Votes > m.Quota {
+			round.Surplus = round.Surplus + (candidate.Votes - m.Quota)
+		}
+	}
+}
+
+func (m *meekStv) findCandidatesToEliminate() MeekCandidates {
+
+	hopefulVotes := int64(0)
+
+	for _, c := range m.Pool.Hopeful() {
+		hopefulVotes += c.Votes
+	}
+
+	if hopefulVotes == 0 && m.currentMeekRound().Surplus == 0 {
+		return m.Pool.Hopeful()
+	}
+
+	return MeekCandidates{}
+}
+
+func (m *meekStv) currentMeekRound() *MeekRound {
+	round := len(m.meekRounds)
+
+	if round < 1 {
+		return &MeekRound{}
+	}
+
+	return m.meekRounds[round-1]
 }

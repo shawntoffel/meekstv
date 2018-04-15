@@ -6,7 +6,7 @@ import (
 
 func (m *meekStv) calculateQuota() int64 {
 	total := int64(m.Ballots.Total()) * m.Scale
-	excess := m.MeekRound.Excess
+	excess := m.currentMeekRound().Excess
 	numSeats := int64(m.NumSeats)
 
 	return ((total - excess) / (numSeats + 1)) + 1

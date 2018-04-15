@@ -12,7 +12,6 @@ type MeekStv interface {
 type meekStv struct {
 	election.CounterState
 	Quota         int64
-	Round         int
 	NumSeats      int
 	Ballots       election.RolledUpBallots
 	Pool          Pool
@@ -20,8 +19,9 @@ type meekStv struct {
 	Scale         int64
 	MaxIterations int
 	ElectedAll    bool
-	MeekRound     MeekRound
-	Seed          int64
+	meekRounds    []*MeekRound
+	//MeekRound     MeekRound
+	Seed int64
 }
 
 func NewMeekStv() MeekStv {
@@ -88,7 +88,7 @@ func (m *meekStv) hasEnded() bool {
 		return true
 	}
 
-	if m.Round >= m.MaxIterations {
+	if m.currentMeekRound().Round >= m.MaxIterations {
 		m.AddEvent(&events.FailedToConverge{MaxIterations: m.MaxIterations})
 		return true
 	}
