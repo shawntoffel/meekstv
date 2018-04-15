@@ -9,39 +9,39 @@ type MeekRound struct {
 	AnyElected bool
 }
 
-func (m *meekStv) DoRound() {
-	m.IncrementRound()
+func (m *meekStv) doRound() {
+	m.incrementRound()
 
-	m.DistributeVotes()
+	m.distributeVotes()
 
-	m.UpdateExcessVotesForRound()
+	m.updateExcessVotesForRound()
 
-	m.UpdateQuota()
+	m.updateQuota()
 
-	count := m.ElectEligibleCandidates()
+	count := m.electEligibleCandidates()
 
 	m.MeekRound.AnyElected = count > 0
 
-	if m.ElectionFinished() {
+	if m.electionFinished() {
 		return
 	}
 
 	for _, candidate := range m.Pool.Candidates() {
-		m.SettleWeight(*candidate)
+		m.settleWeight(*candidate)
 	}
 
 	if m.MeekRound.AnyElected {
 		return
 	}
 
-	m.ExcludeLowestCandidate()
+	m.excludeLowestCandidate()
 
-	if !m.CanExcludeMoreCandidates() {
-		m.ElectAllHopefulCandidates()
+	if !m.canExcludeMoreCandidates() {
+		m.electAllHopefulCandidates()
 	}
 }
 
-func (m *meekStv) IncrementRound() {
+func (m *meekStv) incrementRound() {
 	m.Round = m.Round + 1
 	m.MeekRound = MeekRound{}
 
@@ -50,7 +50,7 @@ func (m *meekStv) IncrementRound() {
 	m.Pool.ZeroAllVotes()
 }
 
-func (m *meekStv) UpdateExcessVotesForRound() {
+func (m *meekStv) updateExcessVotesForRound() {
 	exhausted := int64(m.Ballots.Total()) * m.Scale
 
 	votes := int64(0)
@@ -63,6 +63,6 @@ func (m *meekStv) UpdateExcessVotesForRound() {
 	m.AddEvent(&events.ExcessUpdated{Excess: m.MeekRound.Excess})
 }
 
-func (m *meekStv) CanExcludeMoreCandidates() bool {
+func (m *meekStv) canExcludeMoreCandidates() bool {
 	return m.Pool.Count()-m.Pool.ExcludedCount() > m.NumSeats
 }

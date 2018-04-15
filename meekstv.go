@@ -32,13 +32,13 @@ func NewMeekStv() MeekStv {
 }
 
 func (m *meekStv) Initialize(config election.Config) error {
-	m.SetupNumSeats(config)
-	m.SetupPrecision(config)
-	m.SetupScale(config)
-	m.SetupBallots(config)
-	m.SetupPool(config)
-	m.SetupMaxIterations(config)
-	m.SetupSeed(config)
+	m.setupNumSeats(config)
+	m.setupPrecision(config)
+	m.setupScale(config)
+	m.setupBallots(config)
+	m.setupPool(config)
+	m.setupMaxIterations(config)
+	m.setupSeed(config)
 
 	m.AddEvent(&events.Initialized{Config: config})
 
@@ -46,35 +46,35 @@ func (m *meekStv) Initialize(config election.Config) error {
 }
 
 func (m *meekStv) Count() (*election.Result, error) {
-	m.PerformPreliminaryCount()
+	m.performPreliminaryCount()
 
 	for {
-		m.DoRound()
+		m.doRound()
 
-		if m.HasEnded() {
+		if m.hasEnded() {
 			break
 		}
 
 	}
 
-	m.Finalize()
+	m.finalize()
 
-	return m.Result()
+	return m.result()
 }
 
-func (m *meekStv) PerformPreliminaryCount() {
+func (m *meekStv) performPreliminaryCount() {
 	numCandidates := m.Pool.Count()
 	numExcluded := m.Pool.ExcludedCount()
 
 	if numCandidates <= (m.NumSeats + numExcluded) {
-		m.ElectAllHopefulCandidates()
+		m.electAllHopefulCandidates()
 		m.ElectedAll = true
 	}
 
-	m.ExcludeZeroVoteCandidates()
+	m.excludeZeroVoteCandidates()
 }
 
-func (m *meekStv) HasEnded() bool {
+func (m *meekStv) hasEnded() bool {
 	if m.Error != nil {
 		return true
 	}
@@ -92,12 +92,12 @@ func (m *meekStv) HasEnded() bool {
 	return m.Round >= m.MaxIterations
 }
 
-func (m *meekStv) ElectionFinished() bool {
+func (m *meekStv) electionFinished() bool {
 	numElected := m.Pool.ElectedCount()
 	return numElected >= m.NumSeats
 }
 
-func (m *meekStv) ExcludeZeroVoteCandidates() {
+func (m *meekStv) excludeZeroVoteCandidates() {
 	included := make(map[string]bool)
 
 	for _, ballot := range m.Ballots {
@@ -141,7 +141,7 @@ func (m *meekStv) ExcludeZeroVoteCandidates() {
 	}
 }
 
-func (m *meekStv) Finalize() {
+func (m *meekStv) finalize() {
 	m.Pool.ExcludeHopeful()
 
 	m.AddEvent(&events.RemainingCandidatesExcluded{})
@@ -157,7 +157,7 @@ func (m *meekStv) Finalize() {
 	m.AddEvent(&events.Finalized{Elected: names})
 }
 
-func (m *meekStv) Result() (*election.Result, error) {
+func (m *meekStv) result() (*election.Result, error) {
 
 	if m.Error != nil {
 		return nil, m.Error

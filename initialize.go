@@ -8,7 +8,7 @@ import (
 	"github.com/shawntoffel/meekstv/events"
 )
 
-func (m *meekStv) SetupNumSeats(config election.Config) {
+func (m *meekStv) setupNumSeats(config election.Config) {
 	m.NumSeats = config.NumSeats
 
 	if m.NumSeats < 1 {
@@ -18,40 +18,40 @@ func (m *meekStv) SetupNumSeats(config election.Config) {
 	}
 }
 
-func (m *meekStv) SetupPrecision(config election.Config) {
+func (m *meekStv) setupPrecision(config election.Config) {
 	m.Precision = config.Precision
 }
 
-func (m *meekStv) SetupBallots(config election.Config) {
+func (m *meekStv) setupBallots(config election.Config) {
 	m.Ballots = config.Ballots.Rollup()
 }
 
-func (m *meekStv) SetupScale(config election.Config) {
+func (m *meekStv) setupScale(config election.Config) {
 	if m.Precision == 0 {
-		m.SetupPrecision(config)
+		m.setupPrecision(config)
 	}
 
 	m.Scale = math.Pow64(10, int64(m.Precision))
 }
 
-func (m *meekStv) SetupPool(config election.Config) {
+func (m *meekStv) setupPool(config election.Config) {
 	if m.Scale == 0 {
-		m.SetupScale(config)
+		m.setupScale(config)
 	}
 
 	m.Pool.AddNewCandidates(config.Candidates, m.Scale)
-	m.ExcludeWithdrawnCandidates(config.WithdrawnCandidates)
+	m.excludeWithdrawnCandidates(config.WithdrawnCandidates)
 }
 
-func (m *meekStv) SetupMaxIterations(config election.Config) {
+func (m *meekStv) setupMaxIterations(config election.Config) {
 	m.MaxIterations = 1000
 }
 
-func (m *meekStv) SetupSeed(config election.Config) {
+func (m *meekStv) setupSeed(config election.Config) {
 	m.Seed = config.Seed
 }
 
-func (m *meekStv) ExcludeWithdrawnCandidates(names []string) {
+func (m *meekStv) excludeWithdrawnCandidates(names []string) {
 	excluded := []string{}
 
 	for _, name := range names {

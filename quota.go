@@ -4,7 +4,7 @@ import (
 	"github.com/shawntoffel/meekstv/events"
 )
 
-func (m *meekStv) CalculateQuota() int64 {
+func (m *meekStv) calculateQuota() int64 {
 	total := int64(m.Ballots.Total()) * m.Scale
 	excess := m.MeekRound.Excess
 	numSeats := int64(m.NumSeats)
@@ -12,12 +12,12 @@ func (m *meekStv) CalculateQuota() int64 {
 	return ((total - excess) / (numSeats + 1)) + 1
 }
 
-func (m *meekStv) UpdateQuota() {
+func (m *meekStv) updateQuota() {
 	prevQuota := m.Quota
 
-	m.Quota = m.CalculateQuota()
+	m.Quota = m.calculateQuota()
 
-	scaleBound := m.GetScaleBound()
+	scaleBound := m.getScaleBound()
 
 	if m.Quota < scaleBound {
 		m.Quota = scaleBound
@@ -28,7 +28,7 @@ func (m *meekStv) UpdateQuota() {
 	}
 }
 
-func (m *meekStv) GetScaleBound() int64 {
+func (m *meekStv) getScaleBound() int64 {
 	frac := int64(100000)
 
 	bound := m.Scale / frac

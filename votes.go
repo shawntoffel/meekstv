@@ -2,7 +2,7 @@ package meekstv
 
 import "github.com/shawntoffel/meekstv/events"
 
-func (m *meekStv) DistributeVotes() {
+func (m *meekStv) distributeVotes() {
 	for _, ballot := range m.Ballots {
 		remainder := m.Scale
 
@@ -13,7 +13,7 @@ func (m *meekStv) DistributeVotes() {
 
 			votes := remainder * candidate.Weight * int64(ballot.Count) / m.Scale
 
-			m.GiveVotesToCandidate(*candidate, votes)
+			m.giveVotesToCandidate(*candidate, votes)
 
 			remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
 
@@ -26,7 +26,7 @@ func (m *meekStv) DistributeVotes() {
 	}
 }
 
-func (m *meekStv) GiveVotesToCandidate(meekCandidate MeekCandidate, votes int64) {
+func (m *meekStv) giveVotesToCandidate(meekCandidate MeekCandidate, votes int64) {
 	if meekCandidate.Status == Excluded {
 		return
 	}
@@ -39,7 +39,7 @@ func (m *meekStv) GiveVotesToCandidate(meekCandidate MeekCandidate, votes int64)
 	m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Existing: oldVotes, Total: newVotes})
 }
 
-func (m *meekStv) SettleWeight(candidate MeekCandidate) {
+func (m *meekStv) settleWeight(candidate MeekCandidate) {
 	if candidate.Votes == 0 {
 		return
 	}
