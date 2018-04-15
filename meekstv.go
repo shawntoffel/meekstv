@@ -89,7 +89,12 @@ func (m *meekStv) hasEnded() bool {
 		return true
 	}
 
-	return m.Round >= m.MaxIterations
+	if m.Round >= m.MaxIterations {
+		m.AddEvent(&events.FailedToConverge{MaxIterations: m.MaxIterations})
+		return true
+	}
+
+	return false
 }
 
 func (m *meekStv) electionFinished() bool {
