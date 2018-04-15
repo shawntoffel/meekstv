@@ -145,6 +145,16 @@ func (m *meekStv) Finalize() {
 	m.Pool.ExcludeHopeful()
 
 	m.AddEvent(&events.RemainingCandidatesExcluded{})
+
+	names := []string{}
+
+	elected := m.Pool.Elected().AsCandidates()
+
+	for _, candidate := range elected {
+		names = append(names, candidate.Name)
+	}
+
+	m.AddEvent(&events.Finalized{Elected: names})
 }
 
 func (m *meekStv) Result() (*election.Result, error) {
