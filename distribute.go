@@ -1,9 +1,10 @@
 package meekstv
 
 import (
-	"github.com/shawntoffel/election"
 	"github.com/shawntoffel/meekstv/events"
 )
+
+/*
 
 func (m *meekStv) DistributeVotes() {
 	m.MeekRound.Excess = 0
@@ -62,7 +63,7 @@ func (m *meekStv) DistributeCandidateVotes(meekCandidate MeekCandidate, remainde
 
 	return remaining
 }
-
+*/
 func (m *meekStv) GiveVotesToCandidate(meekCandidate MeekCandidate, votes int64) {
 	if meekCandidate.Status == Excluded {
 		return
