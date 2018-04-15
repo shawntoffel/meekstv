@@ -49,7 +49,6 @@ func (meekCandidate *MeekCandidate) AsCandidate() election.Candidate {
 }
 
 func (meekCandidates MeekCandidates) AsCandidates() election.Candidates {
-
 	candidates := election.Candidates{}
 
 	for _, meekCandidate := range meekCandidates {

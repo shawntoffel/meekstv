@@ -11,15 +11,11 @@ type MeekRound struct {
 
 func (m *meekStv) doRound() {
 	m.incrementRound()
-
 	m.distributeVotes()
-
 	m.updateExcessVotesForRound()
-
 	m.updateQuota()
 
 	count := m.electEligibleCandidates()
-
 	m.MeekRound.AnyElected = count > 0
 
 	if m.electionFinished() {

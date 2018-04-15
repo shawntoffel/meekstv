@@ -10,9 +10,7 @@ func (m *meekStv) electEligibleCandidates() int {
 	eligibleCount := m.findEligibleCandidates()
 
 	m.handleMultiwayTie(eligibleCount)
-
 	m.newlyElectAllAlmostCandidates()
-
 	m.processNewlyElectedCandidates()
 
 	return eligibleCount
@@ -56,7 +54,6 @@ func (m *meekStv) electAllHopefulCandidates() {
 }
 
 func (m *meekStv) handleMultiwayTie(eligibleCount int) {
-
 	count := eligibleCount
 
 	for {

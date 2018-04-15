@@ -54,7 +54,6 @@ func (m *meekStv) Count() (*election.Result, error) {
 		if m.hasEnded() {
 			break
 		}
-
 	}
 
 	m.finalize()
@@ -163,7 +162,6 @@ func (m *meekStv) finalize() {
 }
 
 func (m *meekStv) result() (*election.Result, error) {
-
 	if m.Error != nil {
 		return nil, m.Error
 	}

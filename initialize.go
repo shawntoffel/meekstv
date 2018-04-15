@@ -58,7 +58,6 @@ func (m *meekStv) excludeWithdrawnCandidates(names []string) {
 		candidates := m.Pool.ExcludeByName(name)
 
 		for _, candidate := range candidates {
-
 			excluded = append(excluded, candidate.Name)
 		}
 	}
