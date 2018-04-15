@@ -37,23 +37,29 @@ func (m *meekStv) DoRound() {
 
 				remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
 
-				if remainder == 0 {
-					break
-				}
-
-				if iter.Next() == nil {
+				if remainder == 0 || iter.Next() == nil {
 					break
 				}
 
 				iter = iter.Next()
 			}
 
-			m.MeekRound.Excess = m.MeekRound.Excess + remainder
-
-			if m.MeekRound.Excess > 0 {
-				m.AddEvent(&events.ExcessUpdated{Excess: m.MeekRound.Excess})
-			}
 		}
+
+		exhausted := int64(m.Ballots.Total()) * m.Scale
+
+		v := int64(0)
+
+		for _, c := range m.Pool.Candidates() {
+			v = v + c.Votes
+		}
+
+		exhausted = exhausted - v
+
+		m.MeekRound.Excess = exhausted
+
+		m.AddEvent(&events.ExcessUpdated{Excess: m.MeekRound.Excess})
+		m.UpdateQuota()
 
 		count := m.ElectEligibleCandidates()
 
