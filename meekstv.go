@@ -88,7 +88,7 @@ func (m *meekStv) hasEnded() bool {
 		return true
 	}
 
-	if m.currentMeekRound().Round >= m.MaxIterations {
+	if m.round().Number >= m.MaxIterations {
 		m.AddEvent(&events.FailedToConverge{MaxIterations: m.MaxIterations})
 		return true
 	}

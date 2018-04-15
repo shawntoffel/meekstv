@@ -44,7 +44,7 @@ func (m *meekStv) newlyElectAllAlmostCandidates() {
 	candidates := m.Pool.Almost()
 	for _, candidate := range candidates {
 		m.Pool.NewlyElect(candidate.Id)
-		m.currentMeekRound().AnyElected = true
+		m.round().AnyElected = true
 	}
 }
 

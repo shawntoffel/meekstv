@@ -5,7 +5,7 @@ import (
 )
 
 type MeekRound struct {
-	Round      int
+	Number     int
 	Excess     int64
 	Surplus    int64
 	AnyElected bool
@@ -19,7 +19,7 @@ func (m *meekStv) doRound() {
 	m.updateSurplus()
 
 	count := m.electEligibleCandidates()
-	m.currentMeekRound().AnyElected = count > 0
+	m.round().AnyElected = count > 0
 
 	if m.electionFinished() {
 		return
@@ -29,7 +29,7 @@ func (m *meekStv) doRound() {
 		m.settleWeight(*candidate)
 	}
 
-	if m.currentMeekRound().AnyElected {
+	if m.round().AnyElected {
 		return
 	}
 
@@ -42,7 +42,7 @@ func (m *meekStv) doRound() {
 
 func (m *meekStv) incrementRound() {
 	round := len(m.meekRounds) + 1
-	m.meekRounds = append(m.meekRounds, &MeekRound{Round: round})
+	m.meekRounds = append(m.meekRounds, &MeekRound{Number: round})
 
 	m.AddEvent(&events.RoundStarted{Round: round})
 
@@ -58,8 +58,8 @@ func (m *meekStv) updateExcessVotesForRound() {
 		votes = votes + c.Votes
 	}
 
-	m.currentMeekRound().Excess = exhausted - votes
-	m.AddEvent(&events.ExcessUpdated{Excess: m.currentMeekRound().Excess})
+	m.round().Excess = exhausted - votes
+	m.AddEvent(&events.ExcessUpdated{Excess: m.round().Excess})
 }
 
 func (m *meekStv) canExcludeMoreCandidates() bool {
@@ -68,7 +68,7 @@ func (m *meekStv) canExcludeMoreCandidates() bool {
 
 func (m *meekStv) updateSurplus() {
 	candidates := append(m.Pool.Elected(), m.Pool.Hopeful()...)
-	round := m.currentMeekRound()
+	round := m.round()
 
 	for _, candidate := range candidates {
 		if candidate.Votes > m.Quota {
@@ -85,14 +85,14 @@ func (m *meekStv) findCandidatesToEliminate() MeekCandidates {
 		hopefulVotes += c.Votes
 	}
 
-	if hopefulVotes == 0 && m.currentMeekRound().Surplus == 0 {
+	if hopefulVotes == 0 && m.round().Surplus == 0 {
 		return m.Pool.Hopeful()
 	}
 
 	return MeekCandidates{}
 }
 
-func (m *meekStv) currentMeekRound() *MeekRound {
+func (m *meekStv) round() *MeekRound {
 	round := len(m.meekRounds)
 
 	if round < 1 {
