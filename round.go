@@ -63,6 +63,10 @@ func (m *meekStv) DoRound() {
 
 		count := m.ElectEligibleCandidates()
 
+		if m.ElectionFinished() {
+			return
+		}
+
 		if count > 0 {
 			m.MeekRound.AnyElected = true
 		}
@@ -77,15 +81,6 @@ func (m *meekStv) DoRound() {
 
 	}
 
-	/*
-		m.ElectEligibleCandidates()
-		if m.RoundHasEnded() {
-			return
-		}
-		for _, candidate := range m.Pool.Candidates() {
-			m.SettleWeight(*candidate)
-		}*/
-
 	if !m.ElectionFinished() {
 		m.ExcludeLowestCandidate()
 
@@ -96,50 +91,7 @@ func (m *meekStv) DoRound() {
 			m.ElectAllHopefulCandidates()
 		}
 	}
-	/*
-	 */
 
-	/*
-		for {
-			m.IncrementRound()
-
-			m.ComputeRound()
-
-			if m.RoundHasEnded() {
-				break
-			}
-		}*/
-
-}
-
-func (m *meekStv) ComputeRound() {
-	converged := false
-
-	for i := 0; i < m.MaxIterations; i++ {
-
-		m.DistributeVotes()
-
-		m.UpdateQuota()
-
-		converged = m.Converged()
-
-		if converged {
-			break
-		}
-	}
-
-	if !converged {
-		m.AddEvent(&events.FailedToConverge{MaxIterations: m.MaxIterations})
-	}
-
-	count := m.ElectEligibleCandidates()
-
-	if count > 0 {
-		m.MeekRound.AnyElected = true
-	}
-}
-
-func (m *meekStv) Complete() {
 }
 
 func (m *meekStv) RoundHasEnded() bool {
