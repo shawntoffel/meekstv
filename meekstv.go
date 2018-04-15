@@ -138,8 +138,8 @@ func (m *meekStv) excludeZeroVoteCandidates() {
 
 	if (hopeful - len(excluded)) > m.NumSeats {
 
-		for _, id := range excluded {
-			m.Pool.ExcludeByName(id)
+		for _, name := range excluded {
+			m.Pool.ExcludeByName(name)
 		}
 		m.AddEvent(&events.LosingCandidatesExcluded{Names: excluded})
 	}
