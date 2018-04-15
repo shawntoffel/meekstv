@@ -27,3 +27,11 @@ func (m *meekStv) UpdateQuota() {
 		m.AddEvent(&events.QuotaUpdated{Quota: m.Quota})
 	}
 }
+
+func (m *meekStv) GetScaleBound() int64 {
+	frac := int64(100000)
+
+	bound := m.Scale / frac
+
+	return bound
+}

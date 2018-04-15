@@ -50,30 +50,6 @@ func (m *meekStv) IncrementRound() {
 	m.Pool.ZeroAllVotes()
 }
 
-func (m *meekStv) DistributeVotes() {
-	for _, ballot := range m.Ballots {
-		remainder := m.Scale
-
-		iter := ballot.Ballot.List.Front()
-
-		for {
-			candidate := m.Pool.Candidate(iter.Value.(string))
-
-			votes := remainder * candidate.Weight * int64(ballot.Count) / m.Scale
-
-			m.GiveVotesToCandidate(*candidate, votes)
-
-			remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
-
-			if remainder == 0 || iter.Next() == nil {
-				break
-			}
-
-			iter = iter.Next()
-		}
-	}
-}
-
 func (m *meekStv) UpdateExcessVotesForRound() {
 	exhausted := int64(m.Ballots.Total()) * m.Scale
 
