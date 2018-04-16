@@ -62,5 +62,7 @@ func (m *meekStv) excludeWithdrawnCandidates(names []string) {
 		}
 	}
 
-	m.AddEvent(&events.CandidatesExcluded{Names: excluded})
+	if len(excluded) > 0 {
+		m.AddEvent(&events.CandidatesExcluded{Names: excluded})
+	}
 }

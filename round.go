@@ -59,7 +59,9 @@ func (m *meekStv) updateExcessVotesForRound() {
 	}
 
 	m.round().Excess = exhausted - votes
-	m.AddEvent(&events.ExcessUpdated{Excess: m.round().Excess})
+	if m.round().Excess > 0 {
+		m.AddEvent(&events.ExcessUpdated{Excess: m.round().Excess})
+	}
 }
 
 func (m *meekStv) canExcludeMoreCandidates() bool {
