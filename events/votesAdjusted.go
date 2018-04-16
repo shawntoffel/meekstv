@@ -18,8 +18,13 @@ func (e *VotesAdjusted) Process() election.Event {
 
 	formattedDiff := formatScaledValue(diff, e.Scale)
 	formattedTotal := formatScaledValue(e.Total, e.Scale)
+	vote := "vote"
 
-	description := fmt.Sprintf("%s received %s votes. Total: %s", e.Name, formattedDiff, formattedTotal)
+	if diff != e.Scale {
+		vote += "s"
+	}
+
+	description := fmt.Sprintf("%s received %s %s. Total: %s", e.Name, formattedDiff, vote, formattedTotal)
 
 	return election.Event{Description: description}
 }
