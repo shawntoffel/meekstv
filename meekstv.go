@@ -20,8 +20,7 @@ type meekStv struct {
 	MaxIterations int
 	ElectedAll    bool
 	meekRounds    []*MeekRound
-	//MeekRound     MeekRound
-	Seed int64
+	Seed          int64
 }
 
 func NewMeekStv() MeekStv {
