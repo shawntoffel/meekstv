@@ -13,7 +13,7 @@ func (m *meekStv) distributeVotes() {
 
 			votes := remainder * candidate.Weight * int64(ballot.Count) / m.Scale
 
-			m.giveVotesToCandidate(*candidate, votes, remainder)
+			m.giveVotesToCandidate(*candidate, votes)
 
 			remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
 
@@ -26,7 +26,7 @@ func (m *meekStv) distributeVotes() {
 	}
 }
 
-func (m *meekStv) giveVotesToCandidate(meekCandidate MeekCandidate, votes int64, remainder int64) {
+func (m *meekStv) giveVotesToCandidate(meekCandidate MeekCandidate, votes int64) {
 	if meekCandidate.Status == Excluded {
 		return
 	}
@@ -36,7 +36,7 @@ func (m *meekStv) giveVotesToCandidate(meekCandidate MeekCandidate, votes int64,
 
 	m.Pool.SetVotes(meekCandidate.Id, newVotes)
 
-	if oldVotes != 0 && remainder < m.Scale || m.round().Number == 1 {
+	if oldVotes != 0 || m.round().Number == 1 {
 		m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Existing: oldVotes, Total: newVotes})
 	}
 }
