@@ -79,21 +79,6 @@ func (m *meekStv) updateSurplus() {
 	}
 }
 
-func (m *meekStv) findCandidatesToEliminate() MeekCandidates {
-
-	hopefulVotes := int64(0)
-
-	for _, c := range m.Pool.Hopeful() {
-		hopefulVotes += c.Votes
-	}
-
-	if hopefulVotes == 0 && m.round().Surplus == 0 {
-		return m.Pool.Hopeful()
-	}
-
-	return MeekCandidates{}
-}
-
 func (m *meekStv) round() *MeekRound {
 	round := len(m.meekRounds)
 
