@@ -6,19 +6,17 @@ import (
 	"github.com/shawntoffel/meekstv/events"
 )
 
-func (m *meekStv) ElectEligibleCandidates() int {
-	eligibleCount := m.FindEligibleCandidates()
+func (m *meekStv) electEligibleCandidates() int {
+	eligibleCount := m.findEligibleCandidates()
 
-	m.HandleMultiwayTie(eligibleCount)
-
-	m.NewlyElectAllAlmostCandidates()
-
-	m.ProcessNewlyElectedCandidates()
+	m.handleMultiwayTie(eligibleCount)
+	m.newlyElectAllAlmostCandidates()
+	m.processNewlyElectedCandidates()
 
 	return eligibleCount
 }
 
-func (m *meekStv) FindEligibleCandidates() int {
+func (m *meekStv) findEligibleCandidates() int {
 	count := 0
 	candidates := m.Pool.Hopeful()
 	for _, candidate := range candidates {
@@ -33,40 +31,29 @@ func (m *meekStv) FindEligibleCandidates() int {
 	return count
 }
 
-func (m *meekStv) ProcessNewlyElectedCandidates() {
+func (m *meekStv) processNewlyElectedCandidates() {
 	candidates := m.Pool.NewlyElected()
 
 	for _, candidate := range candidates {
-		electedCount := m.Pool.ElectedCount()
-
-		if electedCount < m.NumSeats {
-			newWeight := (m.Quota * m.Scale) / candidate.Votes
-
-			m.Pool.SetWeight(candidate.Id, newWeight)
-
-			m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, NewWeight: newWeight})
-		}
-
 		m.Pool.Elect(candidate.Id)
 		m.AddEvent(&events.Elected{Name: candidate.Name, Rank: candidate.Rank})
 	}
 }
 
-func (m *meekStv) NewlyElectAllAlmostCandidates() {
+func (m *meekStv) newlyElectAllAlmostCandidates() {
 	candidates := m.Pool.Almost()
 	for _, candidate := range candidates {
 		m.Pool.NewlyElect(candidate.Id)
-		m.MeekRound.AnyElected = true
+		m.round().AnyElected = true
 	}
 }
 
-func (m *meekStv) ElectAllHopefulCandidates() {
+func (m *meekStv) electAllHopefulCandidates() {
 	m.Pool.ElectHopeful()
 	m.AddEvent(&events.AllHopefulCandidatesElected{})
 }
 
-func (m *meekStv) HandleMultiwayTie(eligibleCount int) {
-
+func (m *meekStv) handleMultiwayTie(eligibleCount int) {
 	count := eligibleCount
 
 	for {
@@ -79,12 +66,12 @@ func (m *meekStv) HandleMultiwayTie(eligibleCount int) {
 		m.Pool.ExcludeHopeful()
 		m.AddEvent(&events.AllHopefulCandidatesExcluded{})
 
-		m.ExcludeLowestCandidate()
+		m.excludeLowestCandidate()
 		count = count - 1
 	}
 }
 
-func (m *meekStv) ExcludeLowestCandidate() {
+func (m *meekStv) excludeLowestCandidate() {
 	lowestCandidates := m.Pool.Lowest()
 
 	toExclude := lowestCandidates[0]

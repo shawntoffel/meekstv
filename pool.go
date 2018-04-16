@@ -208,7 +208,6 @@ func (p *pool) Exclude(id string) *MeekCandidate {
 }
 
 func (p *pool) ExcludeByName(name string) MeekCandidates {
-
 	excluded := MeekCandidates{}
 	for _, candidate := range p.Candidates() {
 		if candidate.Name == name {

@@ -5,80 +5,101 @@ import (
 )
 
 type MeekRound struct {
+	Number     int
 	Excess     int64
+	Surplus    int64
 	AnyElected bool
 }
 
-func (m *meekStv) IncrementRound() {
-	m.Round = m.Round + 1
-	m.MeekRound = MeekRound{}
+func (m *meekStv) doRound() {
+	m.incrementRound()
+	m.distributeVotes()
+	m.updateExcessVotesForRound()
+	m.updateQuota()
+	m.updateSurplus()
 
-	m.AddEvent(&events.RoundStarted{Round: m.Round})
+	count := m.electEligibleCandidates()
+	m.round().AnyElected = count > 0
+
+	if m.electionFinished() {
+		return
+	}
+
+	for _, candidate := range m.Pool.Candidates() {
+		m.settleWeight(*candidate)
+	}
+
+	if m.round().AnyElected {
+		return
+	}
+
+	m.excludeLowestCandidate()
+
+	if !m.canExcludeMoreCandidates() {
+		m.electAllHopefulCandidates()
+	}
 }
 
-func (m *meekStv) DoRound() {
-	for {
-		m.IncrementRound()
+func (m *meekStv) incrementRound() {
+	round := len(m.meekRounds) + 1
+	m.meekRounds = append(m.meekRounds, &MeekRound{Number: round})
 
-		m.ComputeRound()
+	m.AddEvent(&events.RoundStarted{Round: round})
 
-		if m.RoundHasEnded() {
-			break
+	m.Pool.ZeroAllVotes()
+}
+
+func (m *meekStv) updateExcessVotesForRound() {
+	exhausted := int64(m.Ballots.Total()) * m.Scale
+
+	votes := int64(0)
+
+	for _, c := range m.Pool.Candidates() {
+		votes = votes + c.Votes
+	}
+
+	m.round().Excess = exhausted - votes
+	if m.round().Excess > 0 {
+		m.AddEvent(&events.ExcessUpdated{Scale: m.Scale, Excess: m.round().Excess})
+	}
+}
+
+func (m *meekStv) canExcludeMoreCandidates() bool {
+	return m.Pool.Count()-m.Pool.ExcludedCount() > m.NumSeats
+}
+
+func (m *meekStv) updateSurplus() {
+	candidates := append(m.Pool.Elected(), m.Pool.Hopeful()...)
+	round := m.round()
+
+	for _, candidate := range candidates {
+		if candidate.Votes > m.Quota {
+			round.Surplus = round.Surplus + (candidate.Votes - m.Quota)
 		}
 	}
-
-	if !m.ElectionFinished() {
-		m.ExcludeLowestCandidate()
-
-		numCandidates := m.Pool.Count()
-		numExcluded := m.Pool.ExcludedCount()
-
-		if (numCandidates - numExcluded) == m.NumSeats {
-			m.ElectAllHopefulCandidates()
-		}
-	}
 }
 
-func (m *meekStv) ComputeRound() {
-	converged := false
+func (m *meekStv) findCandidatesToEliminate() MeekCandidates {
 
-	for i := 0; i < m.MaxIterations; i++ {
+	hopefulVotes := int64(0)
 
-		m.DistributeVotes()
-
-		m.UpdateQuota()
-
-		converged = m.Converged()
-
-		if converged {
-			break
-		}
+	for _, c := range m.Pool.Hopeful() {
+		hopefulVotes += c.Votes
 	}
 
-	if !converged {
-		m.AddEvent(&events.FailedToConverge{MaxIterations: m.MaxIterations})
+	if hopefulVotes == 0 && m.round().Surplus == 0 {
+		return m.Pool.Hopeful()
 	}
 
-	count := m.ElectEligibleCandidates()
-
-	if count > 0 {
-		m.MeekRound.AnyElected = true
-	}
+	return MeekCandidates{}
 }
 
-func (m *meekStv) Complete() {
-}
+func (m *meekStv) round() *MeekRound {
+	round := len(m.meekRounds)
 
-func (m *meekStv) RoundHasEnded() bool {
-	if !m.MeekRound.AnyElected {
-		return true
+	if round < 1 {
+		return &MeekRound{}
 	}
 
-	numElected := m.Pool.ElectedCount()
-
-	if numElected >= m.NumSeats {
-		return true
-	}
-
-	return false
+	return m.meekRounds[round-1]
 }

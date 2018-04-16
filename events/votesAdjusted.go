@@ -2,16 +2,29 @@ package events
 
 import (
 	"fmt"
+
 	"github.com/shawntoffel/election"
 )
 
 type VotesAdjusted struct {
-	Name  string
-	Votes int64
+	Scale    int64
+	Name     string
+	Existing int64
+	Total    int64
 }
 
 func (e *VotesAdjusted) Process() election.Event {
-	description := fmt.Sprintf("%s now has %d votes.", e.Name, e.Votes)
+	diff := e.Total - e.Existing
+
+	formattedDiff := formatScaledValue(diff, e.Scale)
+	formattedTotal := formatScaledValue(e.Total, e.Scale)
+	vote := "vote"
+
+	if diff != e.Scale {
+		vote += "s"
+	}
+
+	description := fmt.Sprintf("%s received %s %s. Total: %s", e.Name, formattedDiff, vote, formattedTotal)
 
 	return election.Event{Description: description}
 }
