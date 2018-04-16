@@ -7,6 +7,7 @@ import (
 )
 
 type VotesAdjusted struct {
+	Scale    int64
 	Name     string
 	Existing int64
 	Total    int64
@@ -14,7 +15,11 @@ type VotesAdjusted struct {
 
 func (e *VotesAdjusted) Process() election.Event {
 	diff := e.Total - e.Existing
-	description := fmt.Sprintf("%s received %d votes. Total: %d", e.Name, diff, e.Total)
+
+	formattedDiff := formatScaledValue(diff, e.Scale)
+	formattedTotal := formatScaledValue(e.Total, e.Scale)
+
+	description := fmt.Sprintf("%s received %s votes. Total: %s", e.Name, formattedDiff, formattedTotal)
 
 	return election.Event{Description: description}
 }

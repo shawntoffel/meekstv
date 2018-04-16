@@ -24,7 +24,7 @@ func (m *meekStv) updateQuota() {
 	}
 
 	if prevQuota != m.Quota {
-		m.AddEvent(&events.QuotaUpdated{Quota: m.Quota})
+		m.AddEvent(&events.QuotaUpdated{Quota: m.Quota, Scale: m.Scale})
 	}
 }
 

@@ -60,7 +60,7 @@ func (m *meekStv) updateExcessVotesForRound() {
 
 	m.round().Excess = exhausted - votes
 	if m.round().Excess > 0 {
-		m.AddEvent(&events.ExcessUpdated{Excess: m.round().Excess})
+		m.AddEvent(&events.ExcessUpdated{Scale: m.Scale, Excess: m.round().Excess})
 	}
 }
 
