@@ -4,5 +4,5 @@ go 1.11
 
 require (
 	github.com/shawntoffel/election v0.1.0
-	github.com/shawntoffel/math v0.0.0-20170730005841-fe1df356a34f
+	github.com/shawntoffel/math v0.0.1
 )
