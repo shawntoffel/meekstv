@@ -2,15 +2,14 @@ package events
 
 import (
 	"fmt"
-	"github.com/shawntoffel/election"
 )
 
 type RoundStarted struct {
 	Round int
 }
 
-func (e *RoundStarted) Process() election.Event {
+func (e *RoundStarted) Process() string {
 	description := fmt.Sprintf("Round %d has started.", e.Round)
 
-	return election.Event{Description: description}
+	return description
 }

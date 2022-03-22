@@ -1,6 +1,7 @@
 package meekstv
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/shawntoffel/election"
@@ -13,15 +14,22 @@ func TestMeekStv(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
-	for _, e := range result.Events {
-		t.Log(e.Description)
+	for _, e := range result.Summary.Events {
+		t.Logf("%s: %s", e.Type, e.Description)
 	}
+	t.Log("Events:", len(result.Summary.Events))
+	t.Log("Rounds:", len(result.Summary.Rounds))
 
-	t.Log("Events:", len(result.Events))
-
-	for _, c := range result.Candidates {
+	for _, c := range result.Elected {
 		t.Log(c.Rank, c.Name)
 	}
+
+	bytes, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	t.Log(string(bytes))
 
 	verifyMeekStvResults(result, t)
 }
@@ -44,7 +52,7 @@ func TestElectionOrder(t *testing.T) {
 }
 
 func verifyMeekStvResults(result *election.Result, t *testing.T) bool {
-	count := len(result.Candidates)
+	count := len(result.Elected)
 
 	expectedCount := 3
 
@@ -66,12 +74,12 @@ func verifyMeekStvResults(result *election.Result, t *testing.T) bool {
 		expected = append(expected, c)
 	}
 
-	for i, got := range result.Candidates {
+	for i, got := range result.Elected {
 
 		expectedCandidate := expected[i]
 
 		if got.Rank != expectedCandidate.Rank || got.Name != expectedCandidate.Name {
-			t.Errorf("Election order is incorrect. Expected: %v, Got: %v", expected, result.Candidates)
+			t.Errorf("Election order is incorrect. Expected: %v, Got: %v", expected, result.Elected)
 
 			return false
 		}
@@ -81,7 +89,9 @@ func verifyMeekStvResults(result *election.Result, t *testing.T) bool {
 }
 
 func generateTestConfig() election.Config {
-	config := election.Config{}
+	config := election.Config{
+		Title: "Test",
+	}
 
 	names := []string{"Alice", "Bob", "Chris", "Don", "Eric", "Frank"}
 

@@ -11,7 +11,7 @@ type Initialized struct {
 	Config election.Config
 }
 
-func (e *Initialized) Process() election.Event {
+func (e *Initialized) Process() string {
 	buffer := bytes.Buffer{}
 
 	buffer.WriteString("A new Meek STV count has been created. ")
@@ -23,5 +23,5 @@ func (e *Initialized) Process() election.Event {
 
 	description := buffer.String()
 
-	return election.Event{Description: description}
+	return description
 }

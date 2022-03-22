@@ -35,10 +35,7 @@ func (m *meekStv) giveVotesToCandidate(meekCandidate MeekCandidate, votes int64)
 	newVotes := oldVotes + votes
 
 	m.Pool.SetVotes(meekCandidate.Id, newVotes)
-
-	if oldVotes != 0 || m.round().Number == 1 {
-		m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Existing: oldVotes, Total: newVotes, Scale: m.Scale})
-	}
+	m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Existing: oldVotes, Total: newVotes, Scale: m.Scale})
 }
 
 func (m *meekStv) settleWeight(candidate MeekCandidate) {
