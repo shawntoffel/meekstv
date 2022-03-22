@@ -2,8 +2,6 @@ package events
 
 import (
 	"fmt"
-
-	"github.com/shawntoffel/election"
 )
 
 type QuotaUpdated struct {
@@ -11,8 +9,8 @@ type QuotaUpdated struct {
 	Quota int64
 }
 
-func (e *QuotaUpdated) Process() election.Event {
+func (e *QuotaUpdated) Process() string {
 	description := fmt.Sprintf("Quota has been updated to: %s", formatScaledValue(e.Quota, e.Scale))
 
-	return election.Event{Description: description}
+	return description
 }

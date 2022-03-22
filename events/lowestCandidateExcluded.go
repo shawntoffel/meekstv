@@ -2,7 +2,6 @@ package events
 
 import (
 	"fmt"
-	"github.com/shawntoffel/election"
 )
 
 type LowestCandidateExcluded struct {
@@ -10,7 +9,7 @@ type LowestCandidateExcluded struct {
 	RandomUsed bool
 }
 
-func (e *LowestCandidateExcluded) Process() election.Event {
+func (e *LowestCandidateExcluded) Process() string {
 
 	description := ""
 	if e.RandomUsed {
@@ -19,5 +18,5 @@ func (e *LowestCandidateExcluded) Process() election.Event {
 		description = fmt.Sprintf("%s has the lowest number of votes and is excluded.", e.Name)
 	}
 
-	return election.Event{Description: description}
+	return description
 }

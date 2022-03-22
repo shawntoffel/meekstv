@@ -1,6 +1,7 @@
 package meekstv
 
 import (
+	"github.com/shawntoffel/election"
 	"github.com/shawntoffel/meekstv/events"
 )
 
@@ -20,6 +21,8 @@ func (m *meekStv) doRound() {
 
 	count := m.electEligibleCandidates()
 	m.round().AnyElected = count > 0
+
+	m.summarizeRound()
 
 	if m.electionFinished() {
 		return
@@ -47,6 +50,20 @@ func (m *meekStv) incrementRound() {
 	m.AddEvent(&events.RoundStarted{Round: round})
 
 	m.Pool.ZeroAllVotes()
+}
+
+func (m *meekStv) summarizeRound() {
+	round := m.round()
+
+	roundSummary := election.RoundSummary{
+		Number:     round.Number,
+		Quota:      m.Quota,
+		Excess:     round.Excess,
+		Surplus:    round.Surplus,
+		Candidates: m.Pool.CandidateSummaries(),
+	}
+
+	m.Summary.AddRound(roundSummary)
 }
 
 func (m *meekStv) updateExcessVotesForRound() {

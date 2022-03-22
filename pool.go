@@ -29,6 +29,7 @@ type Pool interface {
 	ExcludeHopeful()
 	SetWeight(id string, weight int64)
 	ZeroAllVotes()
+	CandidateSummaries() []election.CandidateSummary
 }
 
 type pool struct {
@@ -223,4 +224,21 @@ func (p *pool) ZeroAllVotes() {
 	for _, candidate := range p.Candidates() {
 		p.SetVotes(candidate.Id, 0)
 	}
+}
+
+func (p *pool) CandidateSummaries() []election.CandidateSummary {
+	summaries := []election.CandidateSummary{}
+
+	for _, candidate := range p.Candidates() {
+		summary := election.CandidateSummary{
+			Candidate: candidate.AsCandidate(),
+			Votes:     candidate.Votes,
+			Weight:    candidate.Weight,
+			Status:    string(candidate.Status),
+		}
+
+		summaries = append(summaries, summary)
+	}
+
+	return summaries
 }

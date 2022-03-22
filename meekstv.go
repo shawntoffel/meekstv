@@ -11,6 +11,7 @@ type MeekStv interface {
 
 type meekStv struct {
 	election.CounterState
+	Title         string
 	Quota         int64
 	NumSeats      int
 	Ballots       election.RolledUpBallots
@@ -31,6 +32,7 @@ func NewMeekStv() MeekStv {
 }
 
 func (m *meekStv) Initialize(config election.Config) error {
+	m.setupTitle(config)
 	m.setupNumSeats(config)
 	m.setupPrecision(config)
 	m.setupScale(config)
@@ -167,9 +169,15 @@ func (m *meekStv) result() (*election.Result, error) {
 
 	elected := m.Pool.Elected()
 
-	result := election.Result{}
-	result.Events = m.Events
-	result.Candidates = elected.AsCandidates()
+	result := election.Result{
+		Title:      m.Title,
+		NumSeats:   m.NumSeats,
+		NumBallots: m.Ballots.Total(),
+		Precision:  m.Precision,
+		Seed:       m.Seed,
+		Elected:    elected.AsCandidates(),
+		Summary:    m.Summary,
+	}
 
 	return &result, nil
 }

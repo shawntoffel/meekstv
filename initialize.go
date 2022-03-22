@@ -8,6 +8,10 @@ import (
 	"github.com/shawntoffel/meekstv/events"
 )
 
+func (m *meekStv) setupTitle(config election.Config) {
+	m.Title = config.Title
+}
+
 func (m *meekStv) setupNumSeats(config election.Config) {
 	m.NumSeats = config.NumSeats
 
