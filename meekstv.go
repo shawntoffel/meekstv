@@ -14,7 +14,7 @@ type meekStv struct {
 	Title         string
 	Quota         int64
 	NumSeats      int
-	Ballots       election.RolledUpBallots
+	Ballots       election.Ballots
 	Pool          Pool
 	Precision     int
 	Scale         int64
@@ -84,7 +84,6 @@ func (m *meekStv) hasEnded() bool {
 	}
 
 	numElected := m.Pool.ElectedCount()
-
 	if numElected == m.NumSeats {
 		return true
 	}
@@ -106,20 +105,11 @@ func (m *meekStv) excludeZeroVoteCandidates() {
 	included := make(map[string]bool)
 
 	for _, ballot := range m.Ballots {
-		iter := ballot.Ballot.List.Front()
-
-		for {
-			candidate := m.Pool.Candidate(iter.Value.(string))
-
+		for _, pref := range ballot.Preferences {
+			candidate := m.Pool.Candidate(pref)
 			included[candidate.Id] = true
 
-			if iter.Next() == nil {
-				break
-			}
-
-			iter = iter.Next()
 		}
-
 	}
 
 	excluded := []string{}
@@ -172,7 +162,7 @@ func (m *meekStv) result() (*election.Result, error) {
 	result := election.Result{
 		Title:      m.Title,
 		NumSeats:   m.NumSeats,
-		NumBallots: m.Ballots.Total(),
+		NumBallots: m.Ballots.TotalCount(),
 		Precision:  m.Precision,
 		Seed:       m.Seed,
 		Elected:    elected.AsCandidates(),

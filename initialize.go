@@ -27,7 +27,7 @@ func (m *meekStv) setupPrecision(config election.Config) {
 }
 
 func (m *meekStv) setupBallots(config election.Config) {
-	m.Ballots = config.Ballots.Rollup()
+	m.Ballots = config.Ballots
 }
 
 func (m *meekStv) setupScale(config election.Config) {

@@ -6,22 +6,17 @@ func (m *meekStv) distributeVotes() {
 	for _, ballot := range m.Ballots {
 		remainder := m.Scale
 
-		iter := ballot.Ballot.List.Front()
-
-		for {
-			candidate := m.Pool.Candidate(iter.Value.(string))
-
+		for _, pref := range ballot.Preferences {
+			candidate := m.Pool.Candidate(pref)
 			votes := remainder * candidate.Weight * int64(ballot.Count) / m.Scale
 
 			m.giveVotesToCandidate(*candidate, votes)
 
 			remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
 
-			if remainder == 0 || iter.Next() == nil {
+			if remainder == 0 {
 				break
 			}
-
-			iter = iter.Next()
 		}
 	}
 }

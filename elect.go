@@ -2,6 +2,7 @@ package meekstv
 
 import (
 	"math/rand"
+	"sort"
 
 	"github.com/shawntoffel/meekstv/events"
 )
@@ -89,4 +90,49 @@ func (m *meekStv) excludeLowestCandidate() {
 
 	m.Pool.Exclude(toExclude.Id)
 	m.AddEvent(&events.LowestCandidateExcluded{Name: toExclude.Name, RandomUsed: randomUsed})
+}
+
+func (m *meekStv) excludeAllNoChanceCandidates() int {
+	toExclude := MeekCandidates{}
+
+	totalSurplus := int64(0)
+	for _, c := range m.Pool.Candidates() {
+		if c.Votes > m.Quota {
+			totalSurplus += (c.Votes - m.Quota)
+		}
+	}
+
+	hopefuls := m.Pool.Hopeful()
+	sort.Sort(ByVotes(hopefuls))
+
+	for i := 0; i < len(hopefuls); i++ {
+		tryExclude := hopefuls[0 : len(hopefuls)-i]
+
+		if len(m.Pool.Elected())+len(m.Pool.Almost())+len(hopefuls)-len(tryExclude) < m.NumSeats {
+			continue
+		}
+
+		totalVotes := int64(0)
+		for _, c := range tryExclude {
+			totalVotes += c.Votes
+		}
+
+		if i != 0 && totalVotes+totalSurplus >= hopefuls[len(hopefuls)-i].Votes {
+			continue
+		}
+
+		for _, c := range tryExclude {
+			toExclude = append(toExclude, c)
+		}
+	}
+
+	for _, c := range toExclude {
+		m.Pool.Exclude(c.Id)
+	}
+
+	if len(toExclude) > 0 {
+		m.AddEvent(&events.NoChanceCandidatesExcluded{Names: toExclude.SortedNames()})
+	}
+
+	return len(toExclude)
 }

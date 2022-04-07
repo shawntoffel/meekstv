@@ -17,6 +17,16 @@ const (
 )
 
 type MeekCandidates []*MeekCandidate
+
+func (m MeekCandidates) SortedNames() []string {
+	names := []string{}
+	for _, c := range m {
+		names = append(names, c.Name)
+	}
+	sort.Strings(names)
+	return names
+}
+
 type MeekCandidate struct {
 	election.Candidate
 	Status CandidateStatus

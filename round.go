@@ -36,7 +36,10 @@ func (m *meekStv) doRound() {
 		return
 	}
 
-	m.excludeLowestCandidate()
+	excluded := m.excludeAllNoChanceCandidates()
+	if excluded < 1 && m.canExcludeMoreCandidates() {
+		m.excludeLowestCandidate()
+	}
 
 	if !m.canExcludeMoreCandidates() {
 		m.electAllHopefulCandidates()
@@ -67,7 +70,7 @@ func (m *meekStv) summarizeRound() {
 }
 
 func (m *meekStv) updateExcessVotesForRound() {
-	exhausted := int64(m.Ballots.Total()) * m.Scale
+	exhausted := int64(m.Ballots.TotalCount()) * m.Scale
 
 	votes := int64(0)
 
