@@ -1,28 +1,34 @@
 package events
 
-import (
-	"fmt"
-)
-
 type VotesAdjusted struct {
-	Scale    int64
-	Name     string
-	Existing int64
-	Total    int64
+	Name    string
+	Prev    int64
+	Current int64
+	Scale   int64
 }
 
 func (e *VotesAdjusted) Process() string {
-	diff := e.Total - e.Existing
+	diff := e.Current - e.Prev
 
-	formattedDiff := formatScaledValue(diff, e.Scale)
-	formattedTotal := formatScaledValue(e.Total, e.Scale)
+	formattedTotal := formatScaledValue(e.Current, e.Scale)
+
+	change := "received"
+	total := "Total"
+	prefix := "+"
 	vote := "vote"
 
 	if diff != e.Scale {
 		vote += "s"
 	}
 
-	description := fmt.Sprintf("%s received %s %s. Total: %s", e.Name, formattedDiff, vote, formattedTotal)
+	if diff < 0 {
+		diff *= -1
+		change = "transferred"
+		total = "Remaining"
+		prefix = "-"
+	}
 
-	return description
+	formattedDiff := formatScaledValue(diff, e.Scale)
+
+	return prefix + " " + e.Name + " " + change + " " + formattedDiff + " " + vote + ". " + total + ": " + formattedTotal
 }

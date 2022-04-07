@@ -25,10 +25,7 @@ type meekStv struct {
 }
 
 func NewMeekStv() MeekStv {
-	m := meekStv{}
-	m.Pool = NewPool()
-
-	return &m
+	return &meekStv{}
 }
 
 func (m *meekStv) Initialize(config election.Config) error {

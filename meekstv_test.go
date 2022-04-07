@@ -78,7 +78,7 @@ func TestWinter2022(t *testing.T) {
 	testMeekStv(t, "winter_2022.blt", expected, true)
 }
 
-func TestConsistentElectionOrder(t *testing.T) {
+func TestRepeatableElectionOrder(t *testing.T) {
 	expected := buildExpected(
 		"Alice",
 		"Bob",

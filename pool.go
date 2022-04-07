@@ -6,41 +6,11 @@ import (
 	"github.com/shawntoffel/election"
 )
 
-type Pool interface {
-	Candidate(id string) *MeekCandidate
-	SetVotes(id string, votes int64)
-	Lowest() MeekCandidates
-	Candidates() MeekCandidates
-	Count() int
-	Elected() MeekCandidates
-	Hopeful() MeekCandidates
-	NewlyElected() MeekCandidates
-	Almost() MeekCandidates
-	ElectedCount() int
-	ExcludedCount() int
-	Elect(id string)
-	ElectAllNewlyElected()
-	NewlyElect(id string)
-	SetAlmost(id string)
-	ElectHopeful()
-	AddNewCandidates(candidates election.Candidates, scale int64)
-	Exclude(id string) *MeekCandidate
-	ExcludeByName(name string) MeekCandidates
-	ExcludeHopeful()
-	SetWeight(id string, weight int64)
-	ZeroAllVotes()
-	CandidateSummaries() []election.CandidateSummary
-}
-
-type pool struct {
+type Pool struct {
 	MeekCandidates MeekCandidates
 }
 
-func NewPool() Pool {
-	return &pool{}
-}
-
-func (p *pool) Candidate(id string) *MeekCandidate {
+func (p *Pool) Candidate(id string) *MeekCandidate {
 	for _, candidate := range p.MeekCandidates {
 		if candidate.Id == id {
 			return candidate
@@ -50,67 +20,77 @@ func (p *pool) Candidate(id string) *MeekCandidate {
 	return nil
 }
 
-func (p *pool) SetVotes(id string, votes int64) {
-	candidate := p.Candidate(id)
-
-	candidate.Votes = votes
+func (p *Pool) AddVotes(id string, votes int64) {
+	p.Candidate(id).Votes += votes
 }
 
-func (p *pool) SetWeight(id string, weight int64) {
-	candidate := p.Candidate(id)
-
-	candidate.Weight = weight
+func (p *Pool) SetWeight(id string, weight int64) {
+	p.Candidate(id).Weight = weight
 }
 
-func (p *pool) Candidates() MeekCandidates {
+func (p *Pool) NewlyElect(id string) {
+	p.Candidate(id).Status = NewlyElected
+}
+
+func (p *Pool) SetAlmost(id string) {
+	p.Candidate(id).Status = Almost
+}
+
+func (p *Pool) Candidates() MeekCandidates {
 	return p.MeekCandidates
 }
 
-func (p *pool) CandidatesWithStatus(status CandidateStatus) MeekCandidates {
-	candidates := p.Candidates()
-	result := MeekCandidates{}
+func (p *Pool) Snapshot() []MeekCandidate {
+	candidates := p.MeekCandidates
+	m := make([]MeekCandidate, len(candidates))
+	for i, c := range candidates {
+		m[i] = *c
+	}
+	return m
+}
 
-	for _, candidate := range candidates {
+func (p *Pool) CandidatesWithStatus(status CandidateStatus) MeekCandidates {
+	result := MeekCandidates{}
+	for _, candidate := range p.Candidates() {
 		if candidate.Status == status {
 			result = append(result, candidate)
 		}
 	}
-
 	return result
 }
 
-func (p *pool) Count() int {
+func (p *Pool) Count() int {
 	return len(p.MeekCandidates)
 }
 
-func (p *pool) ExcludedCount() int {
+func (p *Pool) ExcludedCount() int {
 	return len(p.CandidatesWithStatus(Excluded))
 }
 
-func (p *pool) Elected() MeekCandidates {
+func (p *Pool) Elected() MeekCandidates {
 	return p.CandidatesWithStatus(Elected)
 }
 
-func (p *pool) Hopeful() MeekCandidates {
+func (p *Pool) Hopeful() MeekCandidates {
 	return p.CandidatesWithStatus(Hopeful)
 }
 
-func (p *pool) NewlyElected() MeekCandidates {
+func (p *Pool) NewlyElected() MeekCandidates {
 	return p.CandidatesWithStatus(NewlyElected)
 }
 
-func (p *pool) Almost() MeekCandidates {
+func (p *Pool) Almost() MeekCandidates {
 	return p.CandidatesWithStatus(Almost)
 }
 
-func (p *pool) ElectedCount() int {
+func (p *Pool) ElectedCount() int {
 	elected := len(p.CandidatesWithStatus(Elected))
 	newlyElected := len(p.CandidatesWithStatus(NewlyElected))
 
 	return elected + newlyElected
 }
 
-func (p *pool) Elect(id string) {
+func (p *Pool) Elect(id string) {
 	elected := len(p.Elected())
 
 	candidate := p.Candidate(id)
@@ -118,85 +98,67 @@ func (p *pool) Elect(id string) {
 	candidate.Rank = elected + 1
 }
 
-func (p *pool) ElectAllNewlyElected() {
-	candidates := p.CandidatesWithStatus(NewlyElected)
-
-	for _, candidate := range candidates {
-		p.Elect(candidate.Id)
+func (p *Pool) ElectAllNewlyElected() {
+	for _, candidate := range p.Candidates() {
+		if candidate.Status == NewlyElected {
+			p.Elect(candidate.Id)
+		}
 	}
 }
 
-func (p *pool) NewlyElect(id string) {
-	candidate := p.Candidate(id)
-
-	candidate.Status = NewlyElected
-}
-
-func (p *pool) SetAlmost(id string) {
-	candidate := p.Candidate(id)
-
-	candidate.Status = Almost
-}
-
-func (p *pool) ElectHopeful() {
-	candidates := p.Candidates()
-
-	for _, candidate := range candidates {
+func (p *Pool) ElectHopeful() {
+	for _, candidate := range p.Candidates() {
 		if candidate.Status == Hopeful {
 			p.Elect(candidate.Id)
 		}
 	}
 }
 
-func (p *pool) ExcludeHopeful() {
-	candidates := p.Candidates()
-
-	for _, candidate := range candidates {
+func (p *Pool) ExcludeHopeful() {
+	for _, candidate := range p.Candidates() {
 		if candidate.Status == Hopeful {
 			p.Exclude(candidate.Id)
 		}
 	}
 }
 
-func (p *pool) Lowest() MeekCandidates {
+func (p *Pool) Lowest() MeekCandidates {
 	candidates := p.Candidates()
-
 	sort.Sort(ByVotes(candidates))
 
 	lowest := MeekCandidates{}
 
 	for _, candidate := range candidates {
-
 		if candidate.Status == Excluded {
 			continue
 		}
-
 		if len(lowest) > 0 && candidate.Votes != lowest[0].Votes {
 			break
 		}
-
 		lowest = append(lowest, candidate)
 	}
 
 	return lowest
 }
 
-func (p *pool) AddNewCandidates(candidates election.Candidates, scale int64) {
+func (p *Pool) AddNewCandidates(candidates election.Candidates, scale int64) {
 	for _, c := range candidates {
-		meekCandidate := MeekCandidate{}
-		meekCandidate.Id = c.Id
-		meekCandidate.Name = c.Name
-		meekCandidate.Weight = 1 * scale
-		meekCandidate.Status = Hopeful
-		meekCandidate.Votes = 0
+		meekCandidate := MeekCandidate{
+			Candidate: election.Candidate{
+				Id:   c.Id,
+				Name: c.Name,
+			},
+			Weight: 1 * scale,
+			Status: Hopeful,
+			Votes:  0,
+		}
 
 		p.MeekCandidates = append(p.MeekCandidates, &meekCandidate)
 	}
 }
 
-func (p *pool) Exclude(id string) *MeekCandidate {
+func (p *Pool) Exclude(id string) *MeekCandidate {
 	candidate := p.Candidate(id)
-
 	if candidate == nil {
 		return nil
 	}
@@ -205,10 +167,10 @@ func (p *pool) Exclude(id string) *MeekCandidate {
 	candidate.Votes = 0
 	candidate.Status = Excluded
 
-	return p.Candidate(id)
+	return candidate
 }
 
-func (p *pool) ExcludeByName(name string) MeekCandidates {
+func (p *Pool) ExcludeByName(name string) MeekCandidates {
 	excluded := MeekCandidates{}
 	for _, candidate := range p.Candidates() {
 		if candidate.Name == name {
@@ -220,16 +182,17 @@ func (p *pool) ExcludeByName(name string) MeekCandidates {
 	return excluded
 }
 
-func (p *pool) ZeroAllVotes() {
+func (p *Pool) ZeroAllVotes() {
 	for _, candidate := range p.Candidates() {
-		p.SetVotes(candidate.Id, 0)
+		candidate.Votes = 0
 	}
 }
 
-func (p *pool) CandidateSummaries() []election.CandidateSummary {
-	summaries := []election.CandidateSummary{}
+func (p *Pool) CandidateSummaries() []election.CandidateSummary {
+	candidates := p.Candidates()
+	summaries := make([]election.CandidateSummary, len(candidates))
 
-	for _, candidate := range p.Candidates() {
+	for i, candidate := range candidates {
 		summary := election.CandidateSummary{
 			Candidate: candidate.AsCandidate(),
 			Votes:     candidate.Votes,
@@ -237,7 +200,7 @@ func (p *pool) CandidateSummaries() []election.CandidateSummary {
 			Status:    string(candidate.Status),
 		}
 
-		summaries = append(summaries, summary)
+		summaries[i] = summary
 	}
 
 	return summaries

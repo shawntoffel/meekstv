@@ -10,6 +10,7 @@ type MeekRound struct {
 	Excess     int64
 	Surplus    int64
 	AnyElected bool
+	Snapshot   []MeekCandidate
 }
 
 func (m *meekStv) doRound() {
@@ -18,9 +19,11 @@ func (m *meekStv) doRound() {
 	m.updateExcessVotesForRound()
 	m.updateQuota()
 	m.updateSurplus()
+	m.summarizeVotes()
 
 	count := m.electEligibleCandidates()
 	m.round().AnyElected = count > 0
+	m.round().Snapshot = m.Pool.Snapshot()
 
 	m.summarizeRound()
 
@@ -69,16 +72,43 @@ func (m *meekStv) summarizeRound() {
 	m.Summary.AddRound(roundSummary)
 }
 
+func (m *meekStv) summarizeVotes() {
+	prev := m.previousRound()
+	if prev == nil {
+		for _, c := range m.Pool.Candidates() {
+			if c.Votes > 0 {
+				m.AddEvent(&events.VotesAdjusted{
+					Name:    c.Name,
+					Current: c.Votes,
+					Scale:   m.Scale,
+				})
+			}
+		}
+		return
+	}
+
+	for _, previous := range prev.Snapshot {
+		current := m.Pool.Candidate(previous.Id)
+		if current.Id == previous.Id && current.Votes != previous.Votes {
+			m.AddEvent(&events.VotesAdjusted{
+				Name:    current.Name,
+				Prev:    previous.Votes,
+				Current: current.Votes,
+				Scale:   m.Scale,
+			})
+		}
+	}
+}
+
 func (m *meekStv) updateExcessVotesForRound() {
 	exhausted := int64(m.Ballots.TotalCount()) * m.Scale
 
-	votes := int64(0)
-
+	currentVotes := int64(0)
 	for _, c := range m.Pool.Candidates() {
-		votes = votes + c.Votes
+		currentVotes = currentVotes + c.Votes
 	}
 
-	m.round().Excess = exhausted - votes
+	m.round().Excess = exhausted - currentVotes
 	if m.round().Excess > 0 {
 		m.AddEvent(&events.ExcessUpdated{Scale: m.Scale, Excess: m.round().Excess})
 	}
@@ -100,11 +130,22 @@ func (m *meekStv) updateSurplus() {
 }
 
 func (m *meekStv) round() *MeekRound {
-	round := len(m.meekRounds)
-
-	if round < 1 {
+	round := m.getRoundBack(1)
+	if round == nil {
 		return &MeekRound{}
 	}
+	return round
+}
 
-	return m.meekRounds[round-1]
+func (m *meekStv) previousRound() *MeekRound {
+	return m.getRoundBack(2)
+}
+
+func (m *meekStv) getRoundBack(back int) *MeekRound {
+	count := len(m.meekRounds)
+	if count < back {
+		return nil
+	}
+
+	return m.meekRounds[count-back]
 }
