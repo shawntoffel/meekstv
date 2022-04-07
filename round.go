@@ -89,7 +89,7 @@ func (m *meekStv) summarizeVotes() {
 
 	for _, previous := range prev.Snapshot {
 		current := m.Pool.Candidate(previous.Id)
-		if current.Id == previous.Id && current.Votes != previous.Votes {
+		if current.Votes != previous.Votes {
 			m.AddEvent(&events.VotesAdjusted{
 				Name:    current.Name,
 				Prev:    previous.Votes,
