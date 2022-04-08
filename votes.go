@@ -6,22 +6,16 @@ func (m *meekStv) distributeVotes() {
 	for _, ballot := range m.Ballots {
 		remainder := m.Scale
 
-		iter := ballot.Ballot.List.Front()
-
-		for {
-			candidate := m.Pool.Candidate(iter.Value.(string))
-
+		for _, pref := range ballot.Preferences {
+			candidate := m.Pool.Candidate(pref)
 			votes := remainder * candidate.Weight * int64(ballot.Count) / m.Scale
 
 			m.giveVotesToCandidate(*candidate, votes)
 
 			remainder = remainder * (m.Scale - candidate.Weight) / m.Scale
-
-			if remainder == 0 || iter.Next() == nil {
+			if remainder == 0 {
 				break
 			}
-
-			iter = iter.Next()
 		}
 	}
 }
@@ -31,25 +25,18 @@ func (m *meekStv) giveVotesToCandidate(meekCandidate MeekCandidate, votes int64)
 		return
 	}
 
-	oldVotes := meekCandidate.Votes
-	newVotes := oldVotes + votes
-
-	m.Pool.SetVotes(meekCandidate.Id, newVotes)
-	m.AddEvent(&events.VotesAdjusted{Name: meekCandidate.Name, Existing: oldVotes, Total: newVotes, Scale: m.Scale})
+	m.Pool.AddVotes(meekCandidate.Id, votes)
 }
 
 func (m *meekStv) settleWeight(candidate MeekCandidate) {
-	if candidate.Votes == 0 {
+	if candidate.Votes == 0 || candidate.Status != "Elected" {
 		return
 	}
 
-	if candidate.Status != "Elected" {
-		return
-	}
-	newWeight := (m.Quota * candidate.Weight) / candidate.Votes
+	previous := candidate.Weight
+	newWeight := (m.Quota * previous) / candidate.Votes
 
 	remainder := newWeight % candidate.Votes
-
 	if remainder > 0 {
 		newWeight = newWeight + 1
 	}
@@ -58,7 +45,8 @@ func (m *meekStv) settleWeight(candidate MeekCandidate) {
 		newWeight = m.Scale
 	}
 
-	m.Pool.SetWeight(candidate.Id, newWeight)
-
-	m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, NewWeight: newWeight, Scale: m.Scale})
+	if previous != newWeight {
+		m.Pool.SetWeight(candidate.Id, newWeight)
+		m.AddEvent(&events.WeightAdjusted{Name: candidate.Name, Previous: previous, Current: newWeight, Scale: m.Scale})
+	}
 }

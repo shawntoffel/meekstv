@@ -1,16 +1,15 @@
 package events
 
-import (
-	"fmt"
-)
-
-type QuotaUpdated struct {
-	Scale int64
-	Quota int64
+type QuotaAdjusted struct {
+	Current  int64
+	Previous int64
+	Scale    int64
 }
 
-func (e *QuotaUpdated) Process() string {
-	description := fmt.Sprintf("Quota has been updated to: %s", formatScaledValue(e.Quota, e.Scale))
+func (e *QuotaAdjusted) Process() string {
+	if e.Previous == 0 {
+		return "Election quota set to " + formatScaledValue(e.Current, e.Scale)
+	}
 
-	return description
+	return formatDiff(e.Current, e.Previous, e.Scale, "Election", "quota")
 }

@@ -5,7 +5,7 @@ import (
 )
 
 func (m *meekStv) calculateQuota() int64 {
-	total := int64(m.Ballots.Total()) * m.Scale
+	total := int64(m.Ballots.TotalCount()) * m.Scale
 	excess := m.round().Excess
 	numSeats := int64(m.NumSeats)
 
@@ -24,7 +24,7 @@ func (m *meekStv) updateQuota() {
 	}
 
 	if prevQuota != m.Quota {
-		m.AddEvent(&events.QuotaUpdated{Quota: m.Quota, Scale: m.Scale})
+		m.AddEvent(&events.QuotaAdjusted{Previous: prevQuota, Current: m.Quota, Scale: m.Scale})
 	}
 }
 

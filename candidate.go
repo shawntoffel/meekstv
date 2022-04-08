@@ -17,6 +17,24 @@ const (
 )
 
 type MeekCandidates []*MeekCandidate
+
+func (m MeekCandidates) SortedNames() []string {
+	names := make([]string, len(m))
+	for i, c := range m {
+		names[i] = c.Name
+	}
+	sort.Strings(names)
+	return names
+}
+
+func (m MeekCandidates) TotalVotes() int64 {
+	total := int64(0)
+	for _, c := range m {
+		total += c.Votes
+	}
+	return total
+}
+
 type MeekCandidate struct {
 	election.Candidate
 	Status CandidateStatus
@@ -38,6 +56,20 @@ func (c ByVotes) Less(i, j int) bool {
 	return c[i].Votes < c[j].Votes
 }
 
+type BySnapshotVotes []MeekCandidate
+
+func (c BySnapshotVotes) Len() int {
+	return len(c)
+}
+
+func (c BySnapshotVotes) Swap(i, j int) {
+	c[i], c[j] = c[j], c[i]
+}
+
+func (c BySnapshotVotes) Less(i, j int) bool {
+	return c[i].Votes > c[j].Votes
+}
+
 func (meekCandidate *MeekCandidate) AsCandidate() election.Candidate {
 	c := election.Candidate{}
 	c.Id = meekCandidate.Id
@@ -48,16 +80,13 @@ func (meekCandidate *MeekCandidate) AsCandidate() election.Candidate {
 }
 
 func (meekCandidates MeekCandidates) AsCandidates() election.Candidates {
-	candidates := election.Candidates{}
+	candidates := make(election.Candidates, len(meekCandidates))
 
-	for _, meekCandidate := range meekCandidates {
-		candidate := meekCandidate.AsCandidate()
-		candidates = append(candidates, candidate)
+	for i, meekCandidate := range meekCandidates {
+		candidates[i] = meekCandidate.AsCandidate()
 	}
 
 	sorted := candidates
-
 	sort.Sort(election.ByRank(sorted))
-
 	return sorted
 }
