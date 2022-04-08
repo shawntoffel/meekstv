@@ -1,6 +1,8 @@
 package meekstv
 
 import (
+	"sort"
+
 	"github.com/shawntoffel/election"
 	"github.com/shawntoffel/meekstv/events"
 )
@@ -75,7 +77,9 @@ func (m *meekStv) summarizeRound() {
 func (m *meekStv) summarizeVotes() {
 	prev := m.previousRound()
 	if prev == nil {
-		for _, c := range m.Pool.Candidates() {
+		candidates := m.Pool.Snapshot()
+		sort.Sort(BySnapshotVotes(candidates))
+		for _, c := range candidates {
 			if c.Votes > 0 {
 				m.AddEvent(&events.VotesAdjusted{
 					Name:    c.Name,
@@ -87,7 +91,10 @@ func (m *meekStv) summarizeVotes() {
 		return
 	}
 
-	for _, previous := range prev.Snapshot {
+	snapshot := prev.Snapshot
+	sort.Sort(BySnapshotVotes(snapshot))
+
+	for _, previous := range snapshot {
 		current := m.Pool.Candidate(previous.Id)
 		if current.Votes != previous.Votes {
 			m.AddEvent(&events.VotesAdjusted{
@@ -110,7 +117,7 @@ func (m *meekStv) updateExcessVotesForRound() {
 
 	m.round().Excess = exhausted - currentVotes
 	if m.round().Excess > 0 {
-		m.AddEvent(&events.ExcessUpdated{Scale: m.Scale, Excess: m.round().Excess})
+		m.AddEvent(&events.ExcessAvailable{Scale: m.Scale, Excess: m.round().Excess})
 	}
 }
 

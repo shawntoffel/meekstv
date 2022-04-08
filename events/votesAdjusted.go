@@ -8,18 +8,11 @@ type VotesAdjusted struct {
 }
 
 func (e *VotesAdjusted) Process() string {
-	diff := e.Current - e.Prev
-
-	formattedTotal := formatScaledValue(e.Current, e.Scale)
-
 	change := "received"
 	total := "Total"
 	prefix := "+"
-	vote := "vote"
 
-	if diff != e.Scale {
-		vote += "s"
-	}
+	diff := e.Current - e.Prev
 
 	if diff < 0 {
 		diff *= -1
@@ -28,7 +21,13 @@ func (e *VotesAdjusted) Process() string {
 		prefix = "-"
 	}
 
+	vote := "vote"
+	if diff != e.Scale {
+		vote += "s"
+	}
+
 	formattedDiff := formatScaledValue(diff, e.Scale)
+	formattedTotal := formatScaledValue(e.Current, e.Scale)
 
 	return prefix + " " + e.Name + " " + change + " " + formattedDiff + " " + vote + ". " + total + ": " + formattedTotal
 }

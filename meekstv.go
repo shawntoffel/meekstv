@@ -135,17 +135,13 @@ func (m *meekStv) excludeZeroVoteCandidates() {
 
 func (m *meekStv) finalize() {
 	m.Pool.ExcludeHopeful()
-
 	m.AddEvent(&events.RemainingCandidatesExcluded{})
 
-	names := []string{}
-
 	elected := m.Pool.Elected().AsCandidates()
-
-	for _, candidate := range elected {
-		names = append(names, candidate.Name)
+	names := make([]string, len(elected))
+	for i, candidate := range elected {
+		names[i] = candidate.Name
 	}
-
 	m.AddEvent(&events.Finalized{Elected: names})
 }
 

@@ -157,6 +157,12 @@ func (p *Pool) AddNewCandidates(candidates election.Candidates, scale int64) {
 	}
 }
 
+func (p *Pool) ExcludeMany(m MeekCandidates) {
+	for _, c := range m {
+		p.Exclude(c.Id)
+	}
+}
+
 func (p *Pool) Exclude(id string) *MeekCandidate {
 	candidate := p.Candidate(id)
 	if candidate == nil {
