@@ -1,18 +1,22 @@
 package events
 
-type VotesAdjusted struct {
+type VotesSummarized struct {
 	Name    string
 	Prev    int64
 	Current int64
 	Scale   int64
 }
 
-func (e *VotesAdjusted) Process() string {
+func (e *VotesSummarized) Process() string {
+	formattedTotal := formatScaledValue(e.Current, e.Scale)
+	diff := e.Current - e.Prev
+	if diff == 0 {
+		return "= " + e.Name + " votes remain the same. Total: " + formattedTotal
+	}
+
 	change := "received"
 	total := "Total"
 	prefix := "+"
-
-	diff := e.Current - e.Prev
 
 	if diff < 0 {
 		diff *= -1
@@ -27,7 +31,6 @@ func (e *VotesAdjusted) Process() string {
 	}
 
 	formattedDiff := formatScaledValue(diff, e.Scale)
-	formattedTotal := formatScaledValue(e.Current, e.Scale)
 
 	return prefix + " " + e.Name + " " + change + " " + formattedDiff + " " + vote + ". " + total + ": " + formattedTotal
 }

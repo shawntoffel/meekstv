@@ -32,6 +32,18 @@ func TestSummer2017(t *testing.T) {
 	testMeekStv(t, "summer_2017.blt", expected, true)
 }
 
+func TestFall2017(t *testing.T) {
+	expected := buildExpected(
+		"Mahoutsukai no Yome",
+		"Shoujo Shuumatsu Ryokou",
+		"Kujira no Kora wa Sajou ni Utau",
+		"Kino no Tabi  -the Beautiful World- the Animated Series",
+		"Infini-T Force",
+	)
+
+	testMeekStv(t, "fall_2017.blt", expected, true)
+}
+
 func TestWinter2018(t *testing.T) {
 	expected := buildExpected(
 		"Kokkoku",
@@ -40,6 +52,42 @@ func TestWinter2018(t *testing.T) {
 	)
 
 	testMeekStv(t, "winter_2018.blt", expected, true)
+}
+
+func TestSpring2018(t *testing.T) {
+	expected := buildExpected(
+		"Hinamatsuri",
+		"Golden Kamui",
+		"Mahou Shoujo Ore",
+		"Megalo Box",
+		"Persona 5 The Animation",
+	)
+
+	testMeekStv(t, "spring_2018.blt", expected, true)
+}
+
+func TestSummer2018(t *testing.T) {
+	expected := buildExpected(
+		"Shingeki no Kyojin 3",
+		"BANANA FISH",
+		"Asobi Asobase",
+		"Satsuriku no Tenshi",
+		"Shoujo☆Kageki Revue Starlight",
+	)
+
+	testMeekStv(t, "summer_2018.blt", expected, true)
+}
+
+func TesFall2018(t *testing.T) {
+	expected := buildExpected(
+		"JoJo no Kimyou na Bouken: Ougon no Kaze",
+		"Zombie Land Saga",
+		"Golden Kamuy 2",
+		"🍌🐟",
+		"Goblin Slayer",
+	)
+
+	testMeekStv(t, "fall_2018.blt", expected, true)
 }
 
 func TestWinter2019(t *testing.T) {
@@ -54,6 +102,65 @@ func TestWinter2019(t *testing.T) {
 	testMeekStv(t, "winter_2019.blt", expected, true)
 }
 
+func TestSpring2019(t *testing.T) {
+	expected := buildExpected(
+		"Kono Yo no Hate de Koi o Utau Shoujo YU-NO",
+		"One Punch Man 2",
+		"Shingeki no Kyojin 3 Part 2",
+		"Kimetsu no Yaiba",
+		"Sarazanmai",
+	)
+
+	testMeekStv(t, "spring_2019.blt", expected, true)
+}
+func TestSummer2019(t *testing.T) {
+	expected := buildExpected(
+		"Toaru Kagaku no Accelerator",
+		"Vinland Saga",
+		"Cop Craft",
+		"Lord El-Melloi II-sei no Jikenbo: Rail Zeppelin Grace note",
+		"Joshikousei no Mudazukai",
+	)
+
+	testMeekStv(t, "summer_2019.blt", expected, true)
+}
+
+func TestFall2019(t *testing.T) {
+	expected := buildExpected(
+		"PSYCHO-PASS 3",
+		"No Guns Life",
+		"BEASTARS",
+		"Watashi, Nouryoku wa Heikinchi de tte Itta yo ne!",
+		"Fate/Grand Order: Zettai Majuu Sensen Babylonia",
+	)
+
+	testMeekStv(t, "fall_2019.blt", expected, true)
+}
+
+func TestWinter2020(t *testing.T) {
+	expected := buildExpected(
+		"Toaru Kagaku no Railgun T",
+		"Magia Record: Mahou Shoujo Madoka☆Magica Gaiden",
+		"BanG Dream! 3rd Season",
+		"Eizouken ni wa Te wo Dasu na!",
+		"ID: INVADED",
+	)
+
+	testMeekStv(t, "winter_2020.blt", expected, true)
+}
+
+func TestSpring2020(t *testing.T) {
+	expected := buildExpected(
+		"LISTENERS",
+		"Princess Connect! Re:Dive",
+		"Fugou Keiji: Balance:UNLIMITED",
+		"Shin Sakura Taisen the Animation",
+		"Otome Game no Hametsu Flag shika Nai Akuyaku Reijou ni Tensei shiteshimatta…",
+	)
+
+	testMeekStv(t, "spring_2020.blt", expected, true)
+}
+
 func TestSummer2020(t *testing.T) {
 	expected := buildExpected(
 		"Deca-Dence",
@@ -64,6 +171,65 @@ func TestSummer2020(t *testing.T) {
 	)
 
 	testMeekStv(t, "summer_2020.blt", expected, true)
+}
+
+func TestFall2020(t *testing.T) {
+	expected := buildExpected(
+		"Akudama Drive",
+		"Munou na Nana",
+		"Dragon Quest: Dai no Daibouken",
+		"Golden Kamuy 3",
+		"Kamisama ni Natta Hi",
+	)
+
+	testMeekStv(t, "fall_2020.blt", expected, true)
+}
+
+func TestWinter2021(t *testing.T) {
+	expected := buildExpected(
+		"Re:Zero kara Hajimeru Isekai Seikatsu 2nd Season Part 2",
+		"Ura Sekai Picnic",
+		"Wonder Egg Priority",
+		"Yakusoku no Neverland 2",
+		"Mushoku Tensei: Isekai Ittara Honki Dasu",
+	)
+
+	testMeekStv(t, "winter_2021.blt", expected, true)
+}
+func TestSpring2021(t *testing.T) {
+	expected := buildExpected(
+		"Zombie Land Saga: Revenge",
+		"Vivy: Fluorite Eye's Song",
+		"86: Eighty Six",
+		"Thunderbolt Fantasy: Touriken Yuuki 3",
+		"Shadows House",
+	)
+
+	testMeekStv(t, "spring_2021.blt", expected, true)
+}
+
+func TestSummer2021(t *testing.T) {
+	expected := buildExpected(
+		"Magia Record: Mahou Shoujo Madoka☆Magica Gaiden 2nd Season - Kakusei Zenya",
+		"Sonny Boy",
+		"NIGHT HEAD 2041",
+		"Bokutachi no Remake",
+		"Shiroi Suna no Aquatope",
+	)
+
+	testMeekStv(t, "summer_2021.blt", expected, true)
+}
+
+func TestFall2021(t *testing.T) {
+	expected := buildExpected(
+		"JoJo no Kimyou na Bouken: Stone Ocean",
+		"86: Eighty Six Part 2",
+		"Sakugan",
+		"takt op.Destiny",
+		"Taishou Otome Otogibanashi",
+	)
+
+	testMeekStv(t, "fall_2021.blt", expected, true)
 }
 
 func TestWinter2022(t *testing.T) {

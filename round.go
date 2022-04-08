@@ -81,7 +81,7 @@ func (m *meekStv) summarizeVotes() {
 		sort.Sort(BySnapshotVotes(candidates))
 		for _, c := range candidates {
 			if c.Votes > 0 {
-				m.AddEvent(&events.VotesAdjusted{
+				m.AddEvent(&events.VotesSummarized{
 					Name:    c.Name,
 					Current: c.Votes,
 					Scale:   m.Scale,
@@ -96,8 +96,8 @@ func (m *meekStv) summarizeVotes() {
 
 	for _, previous := range snapshot {
 		current := m.Pool.Candidate(previous.Id)
-		if current.Votes != previous.Votes {
-			m.AddEvent(&events.VotesAdjusted{
+		if current.Votes > 0 {
+			m.AddEvent(&events.VotesSummarized{
 				Name:    current.Name,
 				Prev:    previous.Votes,
 				Current: current.Votes,
