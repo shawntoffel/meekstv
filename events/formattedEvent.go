@@ -1,7 +1,6 @@
 package events
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -22,5 +21,5 @@ func formatDiff(current, prev int64, scale int64, name, desc string) string {
 	formattedDiff := formatScaledValue(diff, scale)
 	formattedCurrent := formatScaledValue(current, scale)
 
-	return fmt.Sprintf("%s %s %s by %s. New %s: %s", name, desc, change, formattedDiff, desc, formattedCurrent)
+	return name + " " + desc + " " + change + " by " + formattedDiff + ". New " + desc + ": " + formattedCurrent + "."
 }

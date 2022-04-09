@@ -24,8 +24,6 @@ func (m *meekStv) findEligibleCandidates() int {
 		if candidate.Votes >= m.Quota {
 			count = count + 1
 			m.Pool.SetAlmost(candidate.Id)
-
-			m.AddEvent(&events.PendingElection{Name: candidate.Name})
 		}
 	}
 

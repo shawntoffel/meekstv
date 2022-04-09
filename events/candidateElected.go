@@ -10,7 +10,7 @@ type Elected struct {
 }
 
 func (e *Elected) Process() string {
-	description := fmt.Sprintf("%s has been elected with rank %d.", e.Name, e.Rank)
+	description := fmt.Sprintf("%s has reached the quota and is elected with rank %d.", e.Name, e.Rank)
 
 	return description
 }

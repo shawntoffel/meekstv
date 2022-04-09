@@ -1,7 +1,6 @@
 package events
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -10,5 +9,5 @@ type NoChanceCandidatesExcluded struct {
 }
 
 func (e *NoChanceCandidatesExcluded) Process() string {
-	return fmt.Sprintf("The following candidates will never reach the quota and were exluded: %s", strings.Join(e.Names, ", "))
+	return "Given the remaining surplus of votes, the following candidates will never reach the quota and are excluded: " + strings.Join(e.Names, ", ") + "."
 }
