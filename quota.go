@@ -18,20 +18,13 @@ func (m *meekStv) updateQuota() {
 	m.Quota = m.calculateQuota()
 
 	scaleBound := m.getScaleBound()
-
 	if m.Quota < scaleBound {
 		m.Quota = scaleBound
 	}
 
-	if prevQuota != m.Quota {
-		m.AddEvent(&events.QuotaAdjusted{Previous: prevQuota, Current: m.Quota, Scale: m.Scale})
-	}
+	m.AddEvent(&events.QuotaSummarized{Previous: prevQuota, Current: m.Quota, Scale: m.Scale})
 }
 
 func (m *meekStv) getScaleBound() int64 {
-	frac := int64(100000)
-
-	bound := m.Scale / frac
-
-	return bound
+	return m.Scale / int64(100000)
 }

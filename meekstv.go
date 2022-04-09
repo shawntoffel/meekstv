@@ -94,8 +94,7 @@ func (m *meekStv) hasEnded() bool {
 }
 
 func (m *meekStv) electionFinished() bool {
-	numElected := m.Pool.ElectedCount()
-	return numElected >= m.NumSeats
+	return m.Pool.ElectedCount() >= m.NumSeats
 }
 
 func (m *meekStv) excludeZeroVoteCandidates() {
@@ -105,7 +104,6 @@ func (m *meekStv) excludeZeroVoteCandidates() {
 		for _, pref := range ballot.Preferences {
 			candidate := m.Pool.Candidate(pref)
 			included[candidate.Id] = true
-
 		}
 	}
 
@@ -125,7 +123,6 @@ func (m *meekStv) excludeZeroVoteCandidates() {
 	hopeful := len(m.Pool.Hopeful())
 
 	if (hopeful - len(excluded)) > m.NumSeats {
-
 		for _, name := range excluded {
 			m.Pool.ExcludeByName(name)
 		}

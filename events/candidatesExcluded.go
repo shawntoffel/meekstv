@@ -1,7 +1,6 @@
 package events
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -10,7 +9,5 @@ type CandidatesExcluded struct {
 }
 
 func (e *CandidatesExcluded) Process() string {
-	description := fmt.Sprintf("The following candidates have been excluded: %v", strings.Join(e.Names, ", "))
-
-	return description
+	return "The following candidates have been excluded: " + strings.Join(e.Names, ", ") + "."
 }

@@ -13,13 +13,11 @@ func (m *meekStv) setupTitle(config election.Config) {
 }
 
 func (m *meekStv) setupNumSeats(config election.Config) {
-	m.NumSeats = config.NumSeats
-
-	if m.NumSeats < 1 {
-		err := errors.New("At least one seat is required for election.")
-
-		m.Error = err
+	if config.NumSeats < 1 {
+		m.Error = errors.New("At least one seat is required for election.")
 	}
+
+	m.NumSeats = config.NumSeats
 }
 
 func (m *meekStv) setupPrecision(config election.Config) {

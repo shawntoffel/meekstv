@@ -13,7 +13,7 @@ func (e *LowestCandidateExcluded) Process() string {
 
 	description := ""
 	if e.RandomUsed {
-		description = fmt.Sprintf("%s was tied for lowest number of votes and was randomly selected for exclusion.", e.Name)
+		description = fmt.Sprintf("%s was tied for the lowest number of votes and randomly selected for exclusion.", e.Name)
 	} else {
 		description = fmt.Sprintf("%s has the lowest number of votes and is excluded.", e.Name)
 	}

@@ -26,7 +26,6 @@ func (m *meekStv) doRound() {
 	count := m.electEligibleCandidates()
 	m.round().AnyElected = count > 0
 	m.round().Snapshot = m.Pool.Snapshot()
-
 	m.summarizeRound()
 
 	if m.electionFinished() {
@@ -52,10 +51,10 @@ func (m *meekStv) doRound() {
 }
 
 func (m *meekStv) incrementRound() {
-	round := len(m.meekRounds) + 1
-	m.meekRounds = append(m.meekRounds, &MeekRound{Number: round})
+	roundNumber := len(m.meekRounds) + 1
+	m.meekRounds = append(m.meekRounds, &MeekRound{Number: roundNumber})
 
-	m.AddEvent(&events.RoundStarted{Round: round})
+	m.AddEvent(&events.RoundStarted{Round: roundNumber})
 
 	m.Pool.ZeroAllVotes()
 }
@@ -99,6 +98,8 @@ func (m *meekStv) summarizeVotes() {
 		if current.Votes > 0 {
 			m.AddEvent(&events.VotesSummarized{
 				Name:     current.Name,
+				Elected:  current.Status == Elected,
+				Rank:     current.Rank,
 				Previous: previous.Votes,
 				Current:  current.Votes,
 				Scale:    m.Scale,
