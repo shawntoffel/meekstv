@@ -41,12 +41,7 @@ func (p *Pool) Candidates() MeekCandidates {
 }
 
 func (p *Pool) Snapshot() []MeekCandidate {
-	candidates := p.MeekCandidates
-	m := make([]MeekCandidate, len(candidates))
-	for i, c := range candidates {
-		m[i] = *c
-	}
-	return m
+	return p.MeekCandidates.Snapshot()
 }
 
 func (p *Pool) CandidatesWithStatus(status CandidateStatus) MeekCandidates {
@@ -90,12 +85,12 @@ func (p *Pool) ElectedCount() int {
 	return elected + newlyElected
 }
 
-func (p *Pool) Elect(id string) {
+func (p *Pool) Elect(id string) *MeekCandidate {
 	elected := len(p.Elected())
-
 	candidate := p.Candidate(id)
 	candidate.Status = Elected
 	candidate.Rank = elected + 1
+	return candidate
 }
 
 func (p *Pool) ElectAllNewlyElected() {

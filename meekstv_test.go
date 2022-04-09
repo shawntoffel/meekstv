@@ -22,9 +22,9 @@ func TestSimple(t *testing.T) {
 
 func TestSummer2017(t *testing.T) {
 	expected := buildExpected(
+		"Made in Abyss",
 		"Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
 		"Owarimonogatari (Ge)",
-		"Made in Abyss",
 		"Princess Principal",
 		"Fate/Apocrypha",
 	)
@@ -56,8 +56,8 @@ func TestWinter2018(t *testing.T) {
 
 func TestSpring2018(t *testing.T) {
 	expected := buildExpected(
-		"Hinamatsuri",
 		"Golden Kamui",
+		"Hinamatsuri",
 		"Mahou Shoujo Ore",
 		"Megalo Box",
 		"Persona 5 The Animation",
@@ -92,9 +92,9 @@ func TesFall2018(t *testing.T) {
 
 func TestWinter2019(t *testing.T) {
 	expected := buildExpected(
+		"Yakusoku no Neverland",
 		"Mob Psycho 100 II",
 		"Dororo",
-		"Yakusoku no Neverland",
 		"Kouya no Kotobuki Hikoutai",
 		"Mahou Shoujo Tokushusen Asuka",
 	)
@@ -104,10 +104,10 @@ func TestWinter2019(t *testing.T) {
 
 func TestSpring2019(t *testing.T) {
 	expected := buildExpected(
-		"Kono Yo no Hate de Koi o Utau Shoujo YU-NO",
 		"One Punch Man 2",
-		"Shingeki no Kyojin 3 Part 2",
+		"Kono Yo no Hate de Koi o Utau Shoujo YU-NO",
 		"Kimetsu no Yaiba",
+		"Shingeki no Kyojin 3 Part 2",
 		"Sarazanmai",
 	)
 
@@ -115,8 +115,8 @@ func TestSpring2019(t *testing.T) {
 }
 func TestSummer2019(t *testing.T) {
 	expected := buildExpected(
-		"Toaru Kagaku no Accelerator",
 		"Vinland Saga",
+		"Toaru Kagaku no Accelerator",
 		"Cop Craft",
 		"Lord El-Melloi II-sei no Jikenbo: Rail Zeppelin Grace note",
 		"Joshikousei no Mudazukai",
@@ -151,9 +151,9 @@ func TestWinter2020(t *testing.T) {
 
 func TestSpring2020(t *testing.T) {
 	expected := buildExpected(
+		"Fugou Keiji: Balance:UNLIMITED",
 		"LISTENERS",
 		"Princess Connect! Re:Dive",
-		"Fugou Keiji: Balance:UNLIMITED",
 		"Shin Sakura Taisen the Animation",
 		"Otome Game no Hametsu Flag shika Nai Akuyaku Reijou ni Tensei shiteshimatta…",
 	)
@@ -210,8 +210,8 @@ func TestSpring2021(t *testing.T) {
 
 func TestSummer2021(t *testing.T) {
 	expected := buildExpected(
-		"Magia Record: Mahou Shoujo Madoka☆Magica Gaiden 2nd Season - Kakusei Zenya",
 		"Sonny Boy",
+		"Magia Record: Mahou Shoujo Madoka☆Magica Gaiden 2nd Season - Kakusei Zenya",
 		"NIGHT HEAD 2041",
 		"Bokutachi no Remake",
 		"Shiroi Suna no Aquatope",
