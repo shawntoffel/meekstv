@@ -35,6 +35,14 @@ func (m MeekCandidates) TotalVotes() int64 {
 	return total
 }
 
+func (m MeekCandidates) Snapshot() []MeekCandidate {
+	s := make([]MeekCandidate, len(m))
+	for i, c := range m {
+		s[i] = *c
+	}
+	return s
+}
+
 type MeekCandidate struct {
 	election.Candidate
 	Status CandidateStatus

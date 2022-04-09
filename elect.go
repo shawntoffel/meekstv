@@ -31,10 +31,11 @@ func (m *meekStv) findEligibleCandidates() int {
 }
 
 func (m *meekStv) processNewlyElectedCandidates() {
-	candidates := m.Pool.NewlyElected()
+	snapshotCandidates := m.Pool.NewlyElected().Snapshot()
+	sort.Sort(BySnapshotVotes(snapshotCandidates))
 
-	for _, candidate := range candidates {
-		m.Pool.Elect(candidate.Id)
+	for _, snapShotCandidate := range snapshotCandidates {
+		candidate := m.Pool.Elect(snapShotCandidate.Id)
 		m.AddEvent(&events.Elected{Name: candidate.Name, Rank: candidate.Rank})
 	}
 }
