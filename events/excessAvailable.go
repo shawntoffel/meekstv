@@ -11,7 +11,7 @@ type ExcessAvailable struct {
 
 func (e *ExcessAvailable) Process() string {
 	excess := formatScaledValue(e.Excess, e.Scale)
-	description := fmt.Sprintf("%s excess votes are available after distribution", excess)
+	description := fmt.Sprintf("%s excess votes are available after distribution.", excess)
 
 	return description
 }

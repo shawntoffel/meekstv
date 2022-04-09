@@ -18,10 +18,10 @@ type MeekRound struct {
 func (m *meekStv) doRound() {
 	m.incrementRound()
 	m.distributeVotes()
+	m.summarizeVotes()
 	m.updateExcessVotesForRound()
 	m.updateQuota()
 	m.updateSurplus()
-	m.summarizeVotes()
 
 	count := m.electEligibleCandidates()
 	m.round().AnyElected = count > 0
@@ -98,10 +98,10 @@ func (m *meekStv) summarizeVotes() {
 		current := m.Pool.Candidate(previous.Id)
 		if current.Votes > 0 {
 			m.AddEvent(&events.VotesSummarized{
-				Name:    current.Name,
-				Prev:    previous.Votes,
-				Current: current.Votes,
-				Scale:   m.Scale,
+				Name:     current.Name,
+				Previous: previous.Votes,
+				Current:  current.Votes,
+				Scale:    m.Scale,
 			})
 		}
 	}

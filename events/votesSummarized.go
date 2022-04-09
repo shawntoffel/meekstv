@@ -1,15 +1,15 @@
 package events
 
 type VotesSummarized struct {
-	Name    string
-	Prev    int64
-	Current int64
-	Scale   int64
+	Name     string
+	Previous int64
+	Current  int64
+	Scale    int64
 }
 
 func (e *VotesSummarized) Process() string {
 	formattedTotal := formatScaledValue(e.Current, e.Scale)
-	diff := e.Current - e.Prev
+	diff := e.Current - e.Previous
 	if diff == 0 {
 		return "= " + e.Name + " votes remain the same. Total: " + formattedTotal
 	}
