@@ -1,9 +1,8 @@
 package meekstv
 
 import (
-	"sort"
-
 	"github.com/shawntoffel/election"
+	"github.com/shawntoffel/meekstv/sort_1_17"
 )
 
 type Pool struct {
@@ -119,7 +118,7 @@ func (p *Pool) ExcludeHopeful() {
 
 func (p *Pool) Lowest() MeekCandidates {
 	candidates := p.Candidates()
-	sort.Sort(ByVotes(candidates))
+	sort_1_17.Sort(ByVotes(candidates))
 
 	lowest := MeekCandidates{}
 
