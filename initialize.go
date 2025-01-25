@@ -49,8 +49,12 @@ func (m *meekStv) setupMaxIterations(config election.Config) {
 	m.MaxIterations = 1000
 }
 
-func (m *meekStv) setupSeed(config election.Config) {
-	m.Seed = config.Seed
+func (m *meekStv) setupRandom(config election.Config) {
+	m.random = NewWichmannHillRandom(
+		len(config.Candidates),
+		config.NumSeats+10000,
+		config.Ballots.TotalCount()+20000,
+	)
 }
 
 func (m *meekStv) excludeWithdrawnCandidates(names []string) {

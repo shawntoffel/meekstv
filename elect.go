@@ -1,7 +1,6 @@
 package meekstv
 
 import (
-	"math/rand"
 	"sort"
 
 	"github.com/shawntoffel/meekstv/events"
@@ -79,11 +78,8 @@ func (m *meekStv) excludeLowestCandidate() {
 	randomUsed := false
 
 	if len(lowestCandidates) > 1 {
-		seed := rand.NewSource(m.Seed)
-		r := rand.New(seed)
-		i := r.Intn(len(lowestCandidates))
+		i := m.random.NextInt(len(lowestCandidates))
 		toExclude = lowestCandidates[i]
-
 		randomUsed = true
 	}
 

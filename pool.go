@@ -1,8 +1,9 @@
 package meekstv
 
 import (
+	"sort"
+
 	"github.com/shawntoffel/election"
-	"github.com/shawntoffel/meekstv/sort_1_17"
 )
 
 type Pool struct {
@@ -118,12 +119,14 @@ func (p *Pool) ExcludeHopeful() {
 
 func (p *Pool) Lowest() MeekCandidates {
 	candidates := p.Candidates()
-	sort_1_17.Sort(ByVotes(candidates))
+	sort.SliceStable(candidates, func(i, j int) bool {
+		return candidates[i].Votes < candidates[j].Votes
+	})
 
 	lowest := MeekCandidates{}
 
 	for _, candidate := range candidates {
-		if candidate.Status == Excluded {
+		if candidate.Status != Hopeful {
 			continue
 		}
 		if len(lowest) > 0 && candidate.Votes != lowest[0].Votes {

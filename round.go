@@ -44,10 +44,6 @@ func (m *meekStv) doRound() {
 	if excluded < 1 && m.canExcludeMoreCandidates() {
 		m.excludeLowestCandidate()
 	}
-
-	if !m.canExcludeMoreCandidates() {
-		m.electAllHopefulCandidates()
-	}
 }
 
 func (m *meekStv) incrementRound() {
