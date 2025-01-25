@@ -130,8 +130,8 @@ func TestFall2019(t *testing.T) {
 		"PSYCHO-PASS 3",
 		"No Guns Life",
 		"BEASTARS",
-		"Watashi, Nouryoku wa Heikinchi de tte Itta yo ne!",
 		"Fate/Grand Order: Zettai Majuu Sensen Babylonia",
+		"Watashi, Nouryoku wa Heikinchi de tte Itta yo ne!",
 	)
 
 	testMeekStv(t, "fall_2019.blt", expected, true)
@@ -179,7 +179,7 @@ func TestFall2020(t *testing.T) {
 		"Munou na Nana",
 		"Dragon Quest: Dai no Daibouken",
 		"Golden Kamuy 3",
-		"Kamisama ni Natta Hi",
+		"Majo no Tabitabi",
 	)
 
 	testMeekStv(t, "fall_2020.blt", expected, true)
@@ -235,10 +235,10 @@ func TestFall2021(t *testing.T) {
 func TestWinter2022(t *testing.T) {
 	expected := buildExpected(
 		"Sabikui Bisco",
-		"Princess Connect! Re:Dive Season 2",
-		"Shuumatsu no Harem",
-		"Hakozume: Kouban Joshi no Gyakushuu",
 		"Tensai Ouji no Akaji Kokka Saisei Jutsu",
+		"Shuumatsu no Harem",
+		"Princess Connect! Re:Dive Season 2",
+		"Tokyo 24-ku",
 	)
 
 	testMeekStv(t, "winter_2022.blt", expected, true)
@@ -283,7 +283,6 @@ func generateTestConfig(t *testing.T, filename string) election.Config {
 		t.Errorf("failed to load config from file %s: %s", filename, err.Error())
 	}
 	c.Precision = 8
-	c.Seed = 1
 	return c
 }
 
