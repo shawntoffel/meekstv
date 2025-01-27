@@ -1,100 +1,109 @@
 package meekstv
 
-import (
-	"sort"
-
-	"github.com/shawntoffel/election"
-)
-
-type CandidateStatus string
+type CandidateState uint8
 
 const (
-	Elected      CandidateStatus = "Elected"
-	NewlyElected CandidateStatus = "NewlyElected"
-	Hopeful      CandidateStatus = "Hopeful"
-	Excluded     CandidateStatus = "Excluded"
-	Almost       CandidateStatus = "Almost"
+	Hopeful CandidateState = 1 << iota
+	Elected
+	Excluded
+	Lowest
+	Random
+	Hopeless
+	Withdrawn
 )
 
-type MeekCandidates []*MeekCandidate
-
-func (m MeekCandidates) SortedNames() []string {
-	names := make([]string, len(m))
-	for i, c := range m {
-		names[i] = c.Name
-	}
-	sort.Strings(names)
-	return names
+// Returns true if ALL states in s are active. Logical AND.
+func (c CandidateState) Has(s CandidateState) bool {
+	return c&s == s
 }
 
-func (m MeekCandidates) TotalVotes() int64 {
-	total := int64(0)
-	for _, c := range m {
-		total += c.Votes
-	}
-	return total
+// Returns true if ANY state in s is active. Logical OR.
+func (c CandidateState) HasAny(s CandidateState) bool {
+	return c&s != 0
 }
 
-func (m MeekCandidates) Snapshot() []MeekCandidate {
-	s := make([]MeekCandidate, len(m))
-	for i, c := range m {
-		s[i] = *c
+func newCandidate(id int, name string, scale int64) *Candidate {
+	return &Candidate{
+		ID:             id,
+		Name:           name,
+		Weight:         scale,
+		previousWeight: scale,
+		State:          Hopeful,
 	}
-	return s
 }
 
-type MeekCandidate struct {
-	election.Candidate
-	Status CandidateStatus
+type Candidate struct {
+	ID     int
+	Name   string
 	Weight int64
 	Votes  int64
+	State  CandidateState
+	Rank   int
+
+	truncatedName  string
+	previousWeight int64
+	previousVotes  int64
+	previousState  CandidateState
 }
 
-type ByVotes MeekCandidates
-
-func (c ByVotes) Len() int {
-	return len(c)
+func (c Candidate) elected() bool {
+	return c.State.Has(Elected)
 }
 
-func (c ByVotes) Swap(i, j int) {
-	c[i], c[j] = c[j], c[i]
+func (c Candidate) excluded() bool {
+	return c.State.Has(Excluded)
 }
 
-func (c ByVotes) Less(i, j int) bool {
-	return c[i].Votes < c[j].Votes
+func (c Candidate) newelyElected() bool {
+	return c.elected() && !c.previousState.Has(Elected)
+}
+func (c Candidate) newelyExcluded(reason CandidateState) bool {
+	return c.State.Has(Excluded|reason) && !c.previousState.Has(Excluded)
 }
 
-type BySnapshotVotes []MeekCandidate
-
-func (c BySnapshotVotes) Len() int {
-	return len(c)
+func (c *Candidate) addVotes(votes int64) {
+	if c.excluded() {
+		return
+	}
+	c.Votes += votes
 }
 
-func (c BySnapshotVotes) Swap(i, j int) {
-	c[i], c[j] = c[j], c[i]
+func (c *Candidate) removeVotes() {
+	c.previousState = c.State
+	c.previousVotes = c.Votes
+	c.Votes = 0
 }
 
-func (c BySnapshotVotes) Less(i, j int) bool {
-	return c[i].Votes > c[j].Votes
-}
-
-func (meekCandidate *MeekCandidate) AsCandidate() election.Candidate {
-	c := election.Candidate{}
-	c.Id = meekCandidate.Id
-	c.Name = meekCandidate.Name
-	c.Rank = meekCandidate.Rank
-
-	return c
-}
-
-func (meekCandidates MeekCandidates) AsCandidates() election.Candidates {
-	candidates := make(election.Candidates, len(meekCandidates))
-
-	for i, meekCandidate := range meekCandidates {
-		candidates[i] = meekCandidate.AsCandidate()
+func (c *Candidate) settleWeight(quota int64, scale int64) {
+	if c.Votes == 0 || !c.elected() {
+		return
 	}
 
-	sorted := candidates
-	sort.Sort(election.ByRank(sorted))
-	return sorted
+	newWeight := (quota * c.Weight) / c.Votes
+	if newWeight%c.Votes > 0 {
+		newWeight += 1
+	}
+
+	// Ensure the weight cannot exceed 1.
+	if newWeight > scale {
+		newWeight = scale
+	}
+
+	c.previousWeight = c.Weight
+	c.Weight = newWeight
+}
+
+func (c *Candidate) setElected(rank int) {
+	c.setState(Elected)
+	c.Rank = rank
+}
+
+func (c *Candidate) setExcluded(reason CandidateState) {
+	c.setState(Excluded | reason)
+	c.Weight = 0
+}
+
+func (c *Candidate) setState(s CandidateState) {
+	c.previousState = c.State
+	c.State = s
 }
