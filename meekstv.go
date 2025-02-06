@@ -85,6 +85,11 @@ func (m *meekSTV) doRound(number int) {
 		}
 	}
 
+	// Elect remaining candidates if they are guaranteed to win.
+	if m.pool.Count(Elected|Hopeful) == m.Seats {
+		m.elect(m.pool.Hopeful())
+	}
+
 	m.summarizeRound(number, quota)
 }
 

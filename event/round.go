@@ -12,7 +12,7 @@ type RoundStarted struct {
 func (e RoundStarted) Describe() string {
 	description := fmt.Sprintf("Round: %d, Quota: %s", e.Round, formatScaledValue(e.Quota, e.Scale))
 	if e.Exhausted > 0 {
-		description += ", Exhausted: " + formatScaledValue(e.Exhausted, e.Scale)
+		description += ", Excess: " + formatScaledValue(e.Exhausted, e.Scale)
 	}
 	return description
 }
