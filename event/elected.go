@@ -8,5 +8,5 @@ type CandidateElected struct {
 }
 
 func (e CandidateElected) Describe() string {
-	return fmt.Sprintf("✓ Elected %d: %s", e.Rank, e.Name)
+	return fmt.Sprintf("[O] Elected %d: %s", e.Rank, e.Name)
 }

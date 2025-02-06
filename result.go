@@ -81,6 +81,10 @@ func (round Round) Events() []event.Event {
 		events = append(events, e)
 	}
 
+	for _, e := range round.guaranteedCandidateEvents() {
+		events = append(events, e)
+	}
+
 	return events
 }
 
@@ -106,7 +110,7 @@ func (round Round) voteSummaryEvents() []event.VotesSummarized {
 
 func (round Round) electedCandidateEvents() []event.CandidateElected {
 	var filterFunc = func(c Candidate) bool {
-		return c.newelyElected()
+		return c.newelyElected() && c.Votes > round.Quota
 	}
 
 	var mapFunc = func(c Candidate) event.CandidateElected {
@@ -117,6 +121,26 @@ func (round Round) electedCandidateEvents() []event.CandidateElected {
 	}
 
 	return filterMap(round.Candidates, filterFunc, mapFunc)
+}
+
+func (round Round) guaranteedCandidateEvents() []event.GuaranteedCandidatesElected {
+	events := []event.GuaranteedCandidatesElected{}
+
+	var filterFunc = func(c Candidate) bool {
+		return c.newelyElected() && c.Votes < round.Quota
+	}
+
+	var mapFunc = func(c Candidate) string {
+		return c.Name
+	}
+
+	names := filterMap(round.Candidates, filterFunc, mapFunc)
+	if len(names) > 0 {
+		events = append(events, event.GuaranteedCandidatesElected{
+			Names: names,
+		})
+	}
+	return events
 }
 
 func (round Round) weightEvents() []event.WeightAdjusted {
@@ -195,22 +219,22 @@ var templateFunctions = template.FuncMap{
 }
 
 const reportTemplate = `MeekSTV
-==================================================
-Candidates: {{.Candidates}}, Ballots: {{.Ballots}}, Seats: {{.Seats}}, Precision: {{.Precision}}
+===============================================
+Candidates: {{.Candidates}}, Ballots: {{.Ballots}}, Seats: {{.Seats}}
 {{ if .Withdrawn -}}
 Withdrawn: {{join .Withdrawn ", "}}
 {{ end -}}
 {{ range .Rounds -}}
---------------------------------------------------
+-----------------------------------------------
 {{ .Describe }}
---------------------------------------------------
+-----------------------------------------------
 {{ range .Events -}}
 {{ .Describe }}
 {{ end -}}
 {{ end -}}
-==================================================
+===============================================
 Finalized
-==================================================
+===============================================
 {{range $i, $name := .Elected -}}
 {{add $i 1}}: {{$name}}
 {{ end -}}
