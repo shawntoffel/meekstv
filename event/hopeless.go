@@ -10,13 +10,9 @@ type HopelessCandidatesExcluded struct {
 }
 
 func (e HopelessCandidatesExcluded) Describe() string {
-	var candidates string
-
-	if len(e.Names) > 1 {
-		candidates = fmt.Sprintf("%d candidates", len(e.Names))
-	} else {
-		candidates = "candidate"
+	if len(e.Names) == 1 {
+		return fmt.Sprintf("[X] %s will never reach the quota and is selected for exclusion.", e.Names[0])
 	}
 
-	return fmt.Sprintf("[X] The following %s will never reach the quota and have been selected for exclusion: %s", candidates, strings.Join(e.Names, ", "))
+	return fmt.Sprintf("[X] The following %d candidates will never reach the quota and are selected for exclusion: %s", len(e.Names), strings.Join(e.Names, ", "))
 }
